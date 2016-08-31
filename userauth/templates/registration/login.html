@@ -1,0 +1,20 @@
+{% extends 'registration/base.html' %}
+{% block content %}
+	      {% if up.errors %}
+		<p>请检查错误</p>
+	      {% endif %}
+	      {% for f in up %}
+              <div>
+		{{ f }}
+              </div>
+	      {% endfor %}
+              <div>
+                <button class="btn btn-default submit" value="login" name="login">登录</button>
+                <a class="reset_pass" href="#">忘记密码？</a>
+              </div>
+
+              <div class="clearfix"></div>
+
+              <div class="separator">
+	      </div>
+{% endblock %}

@@ -1,0 +1,6 @@
+<select name="tgt_select" class="form-control" required data-bv-notempty>
+    <option name="" value="">请选择</option>
+    {% for group in group_list %}
+    <option name="group" value="{{ group }}">{{ group }}</option>
+    {% endfor %}
+</select>
