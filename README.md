@@ -13,8 +13,10 @@ https://github.com/puikinsh/gentelella
 
 
 SOMS演示地址：
-[http://soms.imaojia.com:8080/](http://soms.imaojia.com/)
+http://soms.imaojia.com:8080/
 
+User: somsadmin
+Passwd: Imjtest89
 
 组件要求查看requirements.txt
 
