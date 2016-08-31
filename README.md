@@ -79,6 +79,7 @@ curl -sSk https://localhost:8000/login -H 'Accept: application/x-yaml' -d userna
 
 返回如下信息则配置成功：
 
+```
 return:
 \- eauth: pam
   expire: 1472695867.308063
@@ -90,20 +91,25 @@ return:
   start: 1472652667.308062
   token: 99993ca778fa4f31dce472421cbf01d37be936ad
   user: saltapi
+```
 
 上面这些操作都完成后就可以部署soms项目了
 
 安装依赖
+
 pip install -r requirements.txt
 
 同步数据库
+
 python manage.py makemigrations
 python manage.py migrate
 
 创建管理员
+
 python manage.py createsuperuser
 
 runserver运行检查是否正常
+
 python manage.py runserver 0.0.0.0:8080
 
 如果无法正常运行，请检查以上步骤
