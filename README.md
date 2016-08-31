@@ -81,13 +81,13 @@ curl -sSk https://localhost:8000/login -H 'Accept: application/x-yaml' -d userna
 
 ```
 return:
-\- eauth: pam
+- eauth: pam
   expire: 1472695867.308063
   perms:
-  \- .*
-  \- '@wheel'
-  \- '@runner'
-  \- '@jobs'
+  - .*
+  - '@wheel'
+  - '@runner'
+  - '@jobs'
   start: 1472652667.308062
   token: 99993ca778fa4f31dce472421cbf01d37be936ad
   user: saltapi
