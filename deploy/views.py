@@ -2,6 +2,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404, HttpResponse
 
+from django.http import StreamingHttpResponse
+
 from django.contrib.auth.decorators import login_required
 from deploy.saltapi import SaltAPI
 
@@ -10,6 +12,7 @@ from userperm.views import UserIP
 from userperm.models import *
 from .models import *
 from .forms import *
+from tar_file import make_tar
 
 import datetime
 import json
@@ -563,6 +566,45 @@ def salt_file_upload(request):
 
     form = SaltFileForm()
     return render(request, 'salt_file_upload.html', {'form':form,'groups':['panel-single','panel-group']})
+
+@login_required
+def salt_file_download(request):
+    def file_iterator(file_name, chunk_size=512):
+        with open(file_name) as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+
+    if request.method == 'POST':
+        tgt_select = request.POST.get('tgt_select', None)
+        remote_file = request.POST.get('remote_file', None)
+        sapi = SaltAPI(url=settings.SALT_API['url'],username=settings.SALT_API['user'],password=settings.SALT_API['password'])
+        ret_bak = sapi.file_bak(tgt_select, 'cp.push', remote_file, 'list')
+        if tgt_select == 'localhost':
+            return render(request,'redirect.html',{})
+        remote_path = remote_file.replace(remote_file.split('/')[-1],'')
+        dl_path = './media/salt/filedownload/user_%s/%s%s'%(request.user.id,tgt_select,remote_path)
+        dl_file = '%s%s'%(dl_path,remote_file.split('/')[-1])
+        if not os.path.exists(dl_path):
+            os.makedirs(dl_path)
+        try:
+            shutil.copy('/var/cache/salt/master/minions/%s/files/%s' % (tgt_select,remote_file), dl_file)
+            tar_file = make_tar(dl_file,'/tmp')
+            dl_filename = 'attachment;filename="{0}"'.format(tar_file.replace('/tmp/','%s%s'%(tgt_select,remote_path)))
+            response = StreamingHttpResponse(file_iterator(tar_file))
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = dl_filename
+    
+            return response
+    
+        except:
+            print 'No such file or dirctory'
+            return render(request, 'salt_file_download.html', {'ret':u'主机：%s\n结果：远程文件不存在！'%tgt_select})
+
+    return render(request, 'salt_file_download.html', {})
 
 @login_required
 def salt_ajax_file_upload(request):

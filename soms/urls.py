@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^deploy/remote_execution/exec/$', dviews.salt_ajax_remote_exec, name='ajax_exec'),
     url(r'^deploy/module_deploy/$', dviews.salt_module_deploy, name='module_deploy'),
     url(r'^deploy/module_deploy/deploy/$', dviews.salt_ajax_module_deploy, name='ajax_deploy'),
+    url(r'^deploy/file_manage/download/$', dviews.salt_file_download, name='file_download'),
     url(r'^deploy/file_manage/upload/$', dviews.salt_file_upload, name='file_manage'),
     url(r'^deploy/file_manage/upload/ajax_upload$', dviews.salt_ajax_file_upload, name='file_ajax'),
     url(r'^deploy/file_manage/rollback/$', dviews.salt_file_rollback, name='file_rollback'),
