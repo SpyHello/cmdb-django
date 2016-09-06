@@ -594,6 +594,8 @@ def salt_file_download(request):
             shutil.copy('/var/cache/salt/master/minions/%s/files/%s' % (tgt_select,remote_file), dl_file)
             tar_file = make_tar(dl_file,'/tmp')
             dl_filename = 'attachment;filename="{0}"'.format(tar_file.replace('/tmp/','%s%s'%(tgt_select,remote_path)))
+            ret = u'主机：%s\n结果：远程文件 %s 下载成功！'%(tgt_select,remote_file)
+            Message.objects.create(type=u'文件管理', user=request.user, action=u'文件下载', action_ip=UserIP(request),content=u'下载文件 \n%s'%ret)
             response = StreamingHttpResponse(file_iterator(tar_file))
             response['Content-Type'] = 'application/octet-stream'
             response['Content-Disposition'] = dl_filename
@@ -602,7 +604,9 @@ def salt_file_download(request):
     
         except:
             print 'No such file or dirctory'
-            return render(request, 'salt_file_download.html', {'ret':u'主机：%s\n结果：远程文件不存在！'%tgt_select})
+            ret = u'主机：%s\n结果：远程文件 %s 下载失败，请确认文件是否存在！'%(tgt_select,remote_file)
+            Message.objects.create(type=u'文件管理', user=request.user, action=u'文件下载', action_ip=UserIP(request),content=u'下载文件 \n%s'%ret)
+            return render(request, 'salt_file_download.html', {'ret':ret})
 
     return render(request, 'salt_file_download.html', {})
 
@@ -729,4 +733,3 @@ def salt_task_check(request):
         return redirect('task_list')
 
     return render(request, 'salt_task_check.html', {})
-
