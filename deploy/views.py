@@ -56,16 +56,23 @@ def RemoteExec(request, fun, group=False):
             sapi = SaltAPI(url=settings.SALT_API['url'],username=settings.SALT_API['user'],password=settings.SALT_API['password'])
             if arg not in danger or request.user.is_superuser:
                 try:
-                    jid = sapi.remote_execution(tgt_list, fun, arg, expr_form)
-                    rst = sapi.salt_runner(jid)
                     if fun == 'cmd.run':
+                        jid = sapi.remote_execution(tgt_list, fun, arg + ';echo ":::"0', expr_form)
+                        rst = {}
+                        while(not rst):
+                            rst = sapi.salt_runner(jid)
+                            time.sleep(1)
                         for k in rst:
-                            if rst[k]:
-                                ret = ret + u'主机：' + k + '\n运行结果：\n' + rst[k] + '\n' + '-'*80 + '\n'
-                            #else:
-                            #    ret = ret + u'主机：' + k + '\n运行结果：\n失败\n' + '-'*80 + '\n'
+                            ret = ret + u'主机：' + k + '\n运行结果：\n%s\n'%rst[k]
+                            r = rst[k].split(':::')[1].strip()
+                            if r != '0':
+                                ret = ret + '%s 执行失败！\n'%arg + '-'*80 + '\n'
+                            else:
+                                ret = ret + '%s 执行成功！\n'%arg + '-'*80 + '\n'
     
                     else:
+                        jid = sapi.remote_execution(tgt_list, fun, arg, expr_form)
+                        rst = sapi.salt_runner(jid)
                         rst = ret['data']
                         rst_all = ''
                         for k in rst:
@@ -700,6 +707,40 @@ def salt_ajax_file_rollback(request):
 
                 return HttpResponse(json.dumps(rst))
 
+def salt_advanced_manage(request):
+    ret = '' 
+    if request.method == 'POST':
+        tgt_selects = request.POST.getlist('tgt_select', None)
+        args = request.POST.getlist('arg', None)
+        checkgrp = request.POST.getlist('ifcheck', None)
+        s='::'.join(str(i) for i in checkgrp)
+        checkgrp = s.replace('0::1','1').split('::')
+        sapi = SaltAPI(url=settings.SALT_API['url'],username=settings.SALT_API['user'],password=settings.SALT_API['password'])
+        for i in range(0,len(tgt_selects)):
+            rst = {}
+            try:
+                jid = sapi.remote_execution(tgt_selects[i], 'cmd.run', args[i] + ';echo ":::"0', 'list')
+                while(not rst):
+                    rst = sapi.salt_runner(jid)
+                    time.sleep(1)
+                ret = ret + u'L%s 主机：'%i + tgt_selects[i] + '\n运行结果：\n' + rst[tgt_selects[i]] + '\n'
+                r = rst[tgt_selects[i]].split(':::')[1].strip()
+                if r != '0':
+                    ret = ret + '%s 执行失败！\nJobs NO. %s\n'%(args[i],jid) + '-'*80 + '\n'
+                    if checkgrp[i] == '0':
+                        break
+                    else:
+                        continue
+                else:
+                    ret = ret + '%s 执行成功！\nJobs NO. %s\n'%(args[i],jid) + '-'*80 + '\n'
+            except:
+                print 'Err'
+        try:
+            Message.objects.create(type=u'部署管理', user=request.user, action=jid, action_ip=UserIP(request),content=u'高级管理 %s'%ret)
+        except:
+            print 'Log Err'
+    return render(request, 'salt_remote_exec_advance.html', {'ret':ret})
+
 @login_required
 def salt_task_list(request):
     '''
@@ -733,3 +774,4 @@ def salt_task_check(request):
         return redirect('task_list')
 
     return render(request, 'salt_task_check.html', {})
+

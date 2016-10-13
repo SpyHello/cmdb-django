@@ -106,6 +106,14 @@ class SaltAPI(object):
         jid = content['return'][0]['jid']
         return jid
 
+    def remote_localexec(self,tgt,fun,arg,expr_form):
+        params = {'client': 'local', 'tgt': tgt, 'fun': fun, 'arg': arg, 'expr_form': expr_form}
+        obj = urllib.urlencode(params)
+        self.token_id()
+        content = self.postRequest(obj)
+        ret = content['return'][0]
+        return ret
+
     def file_copy(self,tgt,fun,arg1,arg2,expr_form):
         '''
         文件上传

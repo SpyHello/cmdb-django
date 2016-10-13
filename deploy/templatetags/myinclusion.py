@@ -16,7 +16,7 @@ def show_minions():
 register.inclusion_tag('minions.html')(show_minions)
 
 
-def show_rollback_minions():
+def show_select_minions():
     '''
     文件回滚中单项显示主机列表
     '''
@@ -24,7 +24,7 @@ def show_rollback_minions():
     tgt_list = SaltHost.objects.filter(alive=True).filter(status=True)
     return {'tgt_list':tgt_list}
 
-register.inclusion_tag('rollback_minions.html')(show_rollback_minions)
+register.inclusion_tag('select_minions.html')(show_select_minions)
 
 
 def show_groups():

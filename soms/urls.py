@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^deploy/module_manage/(?P<id>\d+)/edit/$', dviews.salt_module_manage, name='module_edit'),
     url(r'^deploy/remote_execution/$', dviews.salt_remote_exec, name='remote_exec'),
     url(r'^deploy/remote_execution/exec/$', dviews.salt_ajax_remote_exec, name='ajax_exec'),
+    url(r'^deploy/advanced_manage/$', dviews.salt_advanced_manage, name='advanced_manage'),
     url(r'^deploy/module_deploy/$', dviews.salt_module_deploy, name='module_deploy'),
     url(r'^deploy/module_deploy/deploy/$', dviews.salt_ajax_module_deploy, name='ajax_deploy'),
     url(r'^deploy/file_manage/download/$', dviews.salt_file_download, name='file_download'),
