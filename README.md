@@ -118,7 +118,7 @@ python manage.py runserver 0.0.0.0:8080
 
 PS:
 
-    soms正常运行后，正式上线最好部署django+nginx+uwsgi环境
+    soms正常运行后，正式上线最好部署django+nginx+uwsgi环境(http://imaojia.com/blog/linux/django-nginx-uwsgi-setup-on-centos/)
 
 
 目前SOMS运维平台功能比较简单，代码写的也比较烂，欢迎吐槽 -_-||
