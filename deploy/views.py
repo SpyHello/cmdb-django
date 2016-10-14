@@ -57,7 +57,7 @@ def RemoteExec(request, fun, group=False):
             if arg not in danger or request.user.is_superuser:
                 try:
                     if fun == 'cmd.run':
-                        jid = sapi.remote_execution(tgt_list, fun, arg + ';echo ":::"0', expr_form)
+                        jid = sapi.remote_execution(tgt_list, fun, arg + ';echo ":::"$?', expr_form)
                         rst = {}
                         while(not rst):
                             rst = sapi.salt_runner(jid)
@@ -76,6 +76,7 @@ def RemoteExec(request, fun, group=False):
                         rst = ret['data']
                         rst_all = ''
                         for k in rst:
+                            r_str = ''
                             for k1 in rst[k]:
                                 if 'cmd_' in k1:
                                     v1 = rst[k][k1]
@@ -206,6 +207,7 @@ def AjaxResult(jid,check_type):
         rst = ret['data']
         rst_all = ''
         for k in rst:
+            r_str = ''
             for k1 in rst[k]:
                 if 'cmd_' in k1:
                     v1 = rst[k][k1]
@@ -719,7 +721,7 @@ def salt_advanced_manage(request):
         for i in range(0,len(tgt_selects)):
             rst = {}
             try:
-                jid = sapi.remote_execution(tgt_selects[i], 'cmd.run', args[i] + ';echo ":::"0', 'list')
+                jid = sapi.remote_execution(tgt_selects[i], 'cmd.run', args[i] + ';echo ":::"$?', 'list')
                 while(not rst):
                     rst = sapi.salt_runner(jid)
                     time.sleep(1)
