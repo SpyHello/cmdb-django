@@ -71,6 +71,12 @@
                                         <li><a href="{% url 'file_rollback' %}">文件回滚</a></li>
                                     </ul>
                                     </li>
+                                    <li><a><i class="fa fa-desktop"></i> 资产管理 <span class="fa fa-chevron-down"></span></a>
+                                    <ul class="nav child_menu">
+                                        <li><a href="{% url 'server_info' %}">服务器资产</a></li>
+                                        <li><a href="{% url 'task_check' %}">数据中心</a></li>
+                                    </ul>
+                                    </li>
                                     <li><a><i class="fa fa-bars"></i> 任务管理 <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="{% url 'task_list' %}">任务列表</a></li>

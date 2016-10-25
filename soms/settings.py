@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'userauth',
     'userperm',
     'deploy',
+    'asset',
 ]
 
 MIDDLEWARE_CLASSES = [

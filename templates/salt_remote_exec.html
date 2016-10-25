@@ -61,11 +61,11 @@
                                                 <input type="text" class="form-control" name="arg" value="{{ arg }}">
                                             </div>
                                         </div>
-                                        <div class="item form-group">
+                                        <div name="ajax_result" class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">返回结果
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <fieldset disabled>
+                                                <fieldset>
                                                     <textarea class="form-control" name="result" rows="10">{{ ret }}</textarea>
                                                 </fieldset>
                                             </div>
@@ -99,11 +99,11 @@
                                                 <input type="text" class="form-control" name="arg" value="{{ arg }}">
                                             </div>
                                         </div>
-                                        <div class="item form-group">
+                                        <div name="ajax_result" class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">返回结果
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <fieldset disabled>
+                                                <fieldset>
                                                     <textarea class="form-control" name="result" rows="10">{{ ret }}</textarea>
                                                 </fieldset>
                                             </div>
@@ -149,11 +149,12 @@ data:{jid:jid,"type":"exec"},
 dataType:"html",
 success:function(ret) {
 var ret = eval('('+ret+')');
+var html = "<label class=\"control-label col-md-3 col-sm-3 col-xs-12\">返回结果</label><div class=\"col-md-6 col-sm-6 col-xs-12\"><fieldset><textarea class=\"form-control\" rows=\"10\">"+ret+"</textarea></fieldset></div>";
 if(exec_type=="false"){
-$("#panel-single textarea[name='result']").html(ret);
+$("#panel-single div[name='ajax_result']").html(html);
 }
 else{
-$("#panel-group textarea[name='result']").html(ret);
+$("#panel-group div[name='ajax_result']").html(html);
 }
 },
 errors:function(e){
@@ -195,7 +196,8 @@ data:{tgt_select:tgt_select, arg:arg, check_type:"{{ panel }}"},
 dataType:"html",
 success:function(ret) {
 var ret = eval('('+ret+')');
-$("#{{ panel }} textarea[name='result']").html(ret.ret);
+var html = "<label class=\"control-label col-md-3 col-sm-3 col-xs-12\">返回结果</label><div class=\"col-md-6 col-sm-6 col-xs-12\"><fieldset><textarea class=\"form-control\" rows=\"10\">"+ret.ret+"</textarea></fieldset></div>";
+$("#{{ panel }} div[name='ajax_result']").html(html);
 $("#jid").val(ret.jid);
 $("#exec_type").val(ret.is_group);
 },

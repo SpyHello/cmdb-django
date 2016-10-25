@@ -20,6 +20,7 @@ from django.conf.urls import include, url
 
 from deploy import views as dviews
 from userperm import views as uviews
+from asset import views as aviews
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -36,6 +37,7 @@ urlpatterns = [
     url(r'^deploy/key_list_import/$', dviews.salt_key_import, name='key_import'),
     url(r'^deploy/key_manage$', dviews.salt_key_manage, name='key_add'),
     url(r'^deploy/key_manage$', dviews.salt_key_manage, name='key_delete'),
+    url(r'^deploy/key_manage$', dviews.salt_key_manage, name='key_flush'),
     url(r'^deploy/group_list/$', dviews.salt_group_list, name='group_list'),
     url(r'^deploy/group_manage/add/$', dviews.salt_group_manage, name='group_add'),
     url(r'^deploy/group_manage/delete$', dviews.salt_group_manage, name='group_delete'),
@@ -59,4 +61,6 @@ urlpatterns = [
     url(r'^deploy/remote_exec/check_result/$', dviews.salt_ajax_result, name='ajax_result'),
     url(r'^deploy/group_minions/$', dviews.salt_ajax_minions, name='ajax_minions'),
     url(r'^audit/log_audit/$', uviews.audit_log, name='log_audit'),
+    url(r'^asset/server_info/$', aviews.get_server_asset_info, name='server_info'),
+    url(r'^asset/idc_info/get/$', aviews.idc_info_json, name="idc_info_json"),
 ]

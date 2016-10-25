@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% load myinclusion %}
+{% block css %}
+<link href="/static/css/bootstrapValidator.min.css" rel="stylesheet">
+{% endblock %}
 {% block content %}
 <div class="right_col" role="main">
     <div class="">
@@ -7,63 +10,118 @@
 
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-                    <div class="x_title">
-                        <h2>高级管理 | <small>部署管理</small></h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                            </li>
-                            <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">Settings 1</a>
+                <div class="tabbable" id="tabs-754998">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                        <a href="#panel-single" data-toggle="tab">单机管理</a>
+                        </li>
+                        <li>
+                        <a href="#panel-group" data-toggle="tab">批量管理</a>
+                        </li>
+                    </ul>
+
+                    <div class="x_panel" style="border-top:none;">
+                        <div class="x_title">
+                            <h2>远程管理 </h2>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </li>
-                                <li><a href="#">Settings 2</a>
+                                <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#">Settings 1</a>
+                                    </li>
+                                    <li><a href="#">Settings 2</a>
+                                    </li>
+                                </ul>
+                                </li>
+                                <li><a class="close-link"><i class="fa fa-close"></i></a>
                                 </li>
                             </ul>
-                            </li>
-                            <li><a class="close-link"><i class="fa fa-close"></i></a>
-                            </li>
-                        </ul>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="x_content">
-                            <div class="item form-group">
-                                <label class="level col-md-2 col-sm-2 col-xs-12" style="text-align:right;height:34px;line-height:34px;"><a href="#" id="plus" class="btn btn-sm btn-info" style="margin-right:0"><i class="fa fa-plus"></i></a>&nbsp;<a href="#" id="del" class="btn btn-sm btn-warning"><i class="fa fa-minus"></i></a></label>
-                                <label class="col-md-3 col-sm-3 col-xs-12" style="height:34px;line-height:34px;">远程主机</label>
-                                <label class="col-md-5 col-sm-5 col-xs-12" style="height:34px;line-height:34px;">远程命令</label>
-                                <label class="col-md-2 col-sm-2 col-xs-12" style="height:34px;line-height:34px;">失败跳过</label>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="panel-single">
+                                    <div class="item form-group">
+                                        <label class="level col-md-2 col-sm-2 col-xs-12" style="text-align:right;height:34px;line-height:34px;"><button name="plus" class="btn btn-sm btn-info" style="margin-right:0"><i class="fa fa-plus"></i></button>&nbsp;<button name="del" class="btn btn-sm btn-warning"><i class="fa fa-minus"></i></button></label>
+                                        <label class="col-md-3 col-sm-3 col-xs-12" style="height:34px;line-height:34px;">目标主机</label>
+                                        <label class="col-md-5 col-sm-5 col-xs-12" style="height:34px;line-height:34px;">远程命令</label>
+                                        <label class="col-md-2 col-sm-2 col-xs-12" style="height:34px;line-height:34px;">失败跳过</label>
+                                    </div>
+                                    <form method="post" action="" class="form-horizontal form-border" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div id="group0" class="item form-group">
+                                            <label class="level col-md-2 col-sm-2 col-xs-12" style="text-align:right;height:34px;line-height:34px;">L0</label>
+                                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                                {% show_select_minions %}
+                                            </div>
+                                            <div class="col-md-5 col-sm-5 col-xs-12">
+                                                <input type="text" class="form-control" name="arg" value="">
+                                            </div>
+                                            <div class="col-md-2 col-sm-2 col-xs-12" style="height:34px;line-height:34px;">
+                                                <input type="hidden" name="ifcheck" value="0">
+                                                <input type="checkbox" name="ifcheck" value="1">
+                                            </div>
+                                        </div>
+                                        <div name="ajax_result" class="item form-group">
+                                            <label class="control-label col-md-2 col-sm-3 col-xs-12">返回结果</label>
+                                            <div class="col-md-9 col-sm-9 col-xs-12">
+                                                <fieldset disabled>
+                                                    <textarea class="form-control" name="result" rows="15">{{ ret }}</textarea>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                        <div class="ln_solid"></div>
+                                        <div class="form-group">
+                                            <div class="col-md-6 col-md-offset-3">
+                                                <input type="button" name="send" class="btn btn-success" value="提交">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="tab-pane" id="panel-group">
+                                    <div class="item form-group">
+                                        <label class="level col-md-2 col-sm-2 col-xs-12" style="text-align:right;height:34px;line-height:34px;"><button name="plus" class="btn btn-sm btn-info" style="margin-right:0"><i class="fa fa-plus"></i></button>&nbsp;<button name="del" class="btn btn-sm btn-warning"><i class="fa fa-minus"></i></button></label>
+                                        <label class="col-md-3 col-sm-3 col-xs-12" style="height:34px;line-height:34px;">目标主机</label>
+                                        <label class="col-md-5 col-sm-5 col-xs-12" style="height:34px;line-height:34px;">远程命令</label>
+                                        <label class="col-md-2 col-sm-2 col-xs-12" style="height:34px;line-height:34px;">失败跳过</label>
+                                    </div>
+                                    <form method="post" action="" class="form-horizontal form-border" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div id="group0" class="item form-group">
+                                            <label class="level col-md-2 col-sm-2 col-xs-12" style="text-align:right;height:34px;line-height:34px;">L0</label>
+                                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                                {% show_groups %}
+                                            </div>
+                                            <div class="col-md-5 col-sm-5 col-xs-12">
+                                                <input type="text" class="form-control" name="arg" value="">
+                                            </div>
+                                            <div class="col-md-2 col-sm-2 col-xs-12" style="height:34px;line-height:34px;">
+                                                <input type="hidden" name="ifcheck" value="0">
+                                                <input type="checkbox" name="ifcheck" value="1">
+                                            </div>
+                                        </div>
+                                        <div name="ajax_result" class="item form-group">
+                                            <label class="control-label col-md-2 col-sm-3 col-xs-12">返回结果</label>
+                                            <div class="col-md-9 col-sm-9 col-xs-12">
+                                                <fieldset disabled>
+                                                    <textarea class="form-control" name="result" rows="15">{{ ret }}</textarea>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                        <div class="ln_solid"></div>
+                                        <div class="form-group">
+                                            <div class="col-md-6 col-md-offset-3">
+                                                <input type="hidden" name="check_type" value="panel-group">
+                                                <input type="button" name="send" class="btn btn-success" value="提交">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        <form method="post" class="form-horizontal form-border" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div id="group0" class="item form-group">
-                                <label class="level col-md-2 col-sm-2 col-xs-12" style="text-align:right;height:34px;line-height:34px;">L0</label>
-                                <div class="col-md-3 col-sm-3 col-xs-12">
-                                    {% show_select_minions %}
-                                </div>
-                                <div class="col-md-5 col-sm-5 col-xs-12">
-                                    <input type="text" class="form-control" name="arg" value="">
-                                </div>
-                                <div class="col-md-2 col-sm-2 col-xs-12" style="height:34px;line-height:34px;">
-                                    <input type="hidden" name="ifcheck" value="0">
-                                    <input type="checkbox" name="ifcheck" value="1">
-                                </div>
-                            </div>
-                            <div class="item form-group">
-                                <label class="control-label col-md-2 col-sm-3 col-xs-12">返回结果</label>
-                                <div class="col-md-9 col-sm-9 col-xs-12">
-                                    <fieldset disabled>
-                                        <textarea class="form-control" name="result" rows="15">{{ ret }}</textarea>
-                                    </fieldset>
-                                </div>
-                            </div>
-                            <div class="ln_solid"></div>
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-3">
-                                    <input id="send" type="submit" name="send" class="btn btn-success" value="提交">
-                                </div>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -73,24 +131,63 @@
 {% endblock %}
 
 {% block js %}
+<script src="/static/js/csrf.js"></script>
 <script>
-    jQuery(function($){
-            $('#plus').click(function(){
-                var $div = $('div[id^="group"]:last');
-                var num = parseInt( $div.prop("id").match(/\d+/g), 10 ) + 1;
-                var $group = $div.clone().prop('id', 'group' + num );
-                $div.after( $group );
-                $("#group"+num+" .level").text("L"+num);
+function plus(type){
+    var $div = $("#"+type+" div[id^='group']:last");
+    var num = parseInt( $div.prop("id").match(/\d+/g), 10 ) + 1;
+    var $group = $div.clone().prop("id", "group" + num);
+    $div.after( $group );
+    $("#" + type + " #group" + num + " .level").text("L" + num);
+}
 
-                })
-            $('#del').click(function(){
-                var $div = $('div[id^="group"]:last');
-                var num = parseInt( $div.prop("id").match(/\d+/g), 10 );
-                if(num == 0){
-                    return false;
-                }
-                $("#group"+num).remove();
-                })
-            })
+function del(type){
+    var $div = $("#"+type+" div[id^='group']:last");
+    var num = parseInt( $div.prop("id").match(/\d+/g), 10 );
+    if( num == 0 ){
+        return false;
+    }
+    $("#" + type + " #group" + num).remove();
+}
+
+function send(type){
+    $("#"+type+" div[name='ajax_result']").text();
+    $.ajax({
+        type: "POST",
+        url: "{% url 'advanced_manage' %}",
+        data: $("#"+type+" form").serialize(),
+        success: function(ret){
+            var ret = eval('('+ret+')');
+            var html = "<label class=\"control-label col-md-2 col-sm-3 col-xs-12\">返回结果</label><div class=\"col-md-9 col-sm-9 col-xs-12\"><fieldset><textarea class=\"form-control\" rows=\"15\">"+ret+"</textarea></fieldset></div>";
+            $("#"+type+" div[name='ajax_result']").html(html);
+        }
+    })
+}
+
+$(function(){
+    $("#panel-single button[name='plus']").click(function(){
+            plus("panel-single");
+        })
+    $("#panel-single button[name='del']").click(function(){
+            del("panel-single");
+        })
+
+    $("#panel-single input[name='send']").click(function(){
+            send("panel-single");
+
+        })
+
+    $("#panel-group button[name='plus']").click(function(){
+            plus("panel-group");
+        })
+    $("#panel-group button[name='del']").click(function(){
+            del("panel-group");
+        })
+
+    $("#panel-group input[name='send']").click(function(){
+            send("panel-group");
+        })
+    })
+
 </script>
 {% endblock %}

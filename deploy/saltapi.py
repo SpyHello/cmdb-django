@@ -154,6 +154,16 @@ class SaltAPI(object):
         ret = content['return'][0]
         return ret
 
+    def remote_server_info(self,tgt,fun):
+        '''
+        获取远程主机信息
+        '''
+        params = {'client': 'local', 'tgt': tgt, 'fun': fun}
+        obj = urllib.urlencode(params)
+        self.token_id()
+        content = self.postRequest(obj)
+        ret = content['return'][0][tgt]
+        return ret
 
 def main():
     sapi = SaltAPI(url='https://127.0.0.1:8000',username='saltapi',password='password')

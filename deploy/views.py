@@ -14,8 +14,13 @@ from .models import *
 from .forms import *
 from tar_file import make_tar
 
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+#import time
 import datetime
-import json
 import shutil
 import os
 import re
@@ -58,13 +63,19 @@ def RemoteExec(request, fun, group=False):
                 try:
                     if fun == 'cmd.run':
                         jid = sapi.remote_execution(tgt_list, fun, arg + ';echo ":::"$?', expr_form)
+                        if is_group:
+                            s = SaltGroup.objects.get(groupname=tgt_list)
+                            s_len = s.minions.all().count()
+                        else:
+                            s = tgt_list.split(',')
+                            s_len = len(s)
                         rst = {}
-                        while(not rst):
+                        while(len(rst)<s_len):
                             rst = sapi.salt_runner(jid)
-                            time.sleep(1)
+                            #time.sleep(1)
                         for k in rst:
                             ret = ret + u'主机：' + k + '\n运行结果：\n%s\n'%rst[k]
-                            r = rst[k].split(':::')[1].strip()
+                            r = rst[k].split(':::')[-1].strip()
                             if r != '0':
                                 ret = ret + '%s 执行失败！\n'%arg + '-'*80 + '\n'
                             else:
@@ -312,6 +323,12 @@ def salt_key_manage(request, hostname=None):
                 salthost.status=False
                 salthost.save()
                 Message.objects.create(type=u'部署管理', user=request.user, action=u'删除主机', action_ip=UserIP(request),content=u'删除主机 %s'%salthost.hostname)
+        if request.GET.has_key('flush'):
+            ret = sapi.salt_alive(hostname)
+            if ret:
+                salthost.status=True
+                salthost.save()
+                Message.objects.create(type=u'部署管理', user=request.user, action=u'刷新主机', action_ip=UserIP(request),content=u'刷新主机 %s'%salthost.hostname)
     return redirect('key_list')
 
 @login_required
@@ -712,35 +729,57 @@ def salt_ajax_file_rollback(request):
 def salt_advanced_manage(request):
     ret = '' 
     if request.method == 'POST':
-        tgt_selects = request.POST.getlist('tgt_select', None)
-        args = request.POST.getlist('arg', None)
-        checkgrp = request.POST.getlist('ifcheck', None)
-        s='::'.join(str(i) for i in checkgrp)
-        checkgrp = s.replace('0::1','1').split('::')
-        sapi = SaltAPI(url=settings.SALT_API['url'],username=settings.SALT_API['user'],password=settings.SALT_API['password'])
-        for i in range(0,len(tgt_selects)):
-            rst = {}
-            try:
-                jid = sapi.remote_execution(tgt_selects[i], 'cmd.run', args[i] + ';echo ":::"$?', 'list')
-                while(not rst):
-                    rst = sapi.salt_runner(jid)
-                    time.sleep(1)
-                ret = ret + u'L%s 主机：'%i + tgt_selects[i] + '\n运行结果：\n' + rst[tgt_selects[i]] + '\n'
-                r = rst[tgt_selects[i]].split(':::')[1].strip()
-                if r != '0':
-                    ret = ret + '%s 执行失败！\nJobs NO. %s\n'%(args[i],jid) + '-'*80 + '\n'
-                    if checkgrp[i] == '0':
-                        break
+        if request.is_ajax():
+            tgt_selects = request.POST.getlist('tgt_select', None)
+            args = request.POST.getlist('arg', None)
+            checkgrp = request.POST.getlist('ifcheck', None)
+            check_type = request.POST.get('check_type', None)
+            if check_type == 'panel-group':
+                expr_form = 'nodegroup'
+            else:
+                expr_form = 'list'
+            s='::'.join(str(i) for i in checkgrp)
+            checkgrp = s.replace('0::1','1').split('::')
+            sapi = SaltAPI(url=settings.SALT_API['url'],username=settings.SALT_API['user'],password=settings.SALT_API['password'])
+            for i in range(0,len(tgt_selects)):
+                try:
+                    jid = sapi.remote_execution(tgt_selects[i], 'cmd.run', args[i] + ';echo ":::"$?', expr_form)
+                    if check_type == 'panel-group':
+                        s = SaltGroup.objects.get(groupname=tgt_selects[i])
+                        s_len = s.minions.all().count()
                     else:
-                        continue
-                else:
-                    ret = ret + '%s 执行成功！\nJobs NO. %s\n'%(args[i],jid) + '-'*80 + '\n'
+                        s = tgt_selects[i].split(',')
+                        s_len = len(s)
+                    rst = {}
+                    while(len(rst)<s_len):
+                        rst = sapi.salt_runner(jid)
+                        #time.sleep(1)
+                    j = 0
+                    for k in rst:
+                        ret = ret + u'L%s-%s 主机：'%(i,j) + k + '\n运行结果：\n' + rst[k] + '\n'
+                        j = j + 1
+                        r = rst[k].split(':::')[-1].strip()
+                        if r != '0':
+                            ret = ret + '%s 执行失败！\nJobs NO. %s\n'%(args[i],jid) + '-'*80 + '\n'
+                            if checkgrp[i] == '0':
+                                try:
+                                    Message.objects.create(type=u'部署管理', user=request.user, action=jid, action_ip=UserIP(request),content=u'高级管理 %s'%ret)
+                                except:
+                                    print 'Log Err'
+                                return HttpResponse(json.dumps(ret))
+                            else:
+                                continue
+                        else:
+                            ret = ret + '%s 执行成功！\nJobs NO. %s\n'%(args[i],jid) + '-'*80 + '\n'
+                except:
+                    print 'Err'
+            try:
+                Message.objects.create(type=u'部署管理', user=request.user, action=jid, action_ip=UserIP(request),content=u'高级管理 %s'%ret)
             except:
-                print 'Err'
-        try:
-            Message.objects.create(type=u'部署管理', user=request.user, action=jid, action_ip=UserIP(request),content=u'高级管理 %s'%ret)
-        except:
-            print 'Log Err'
+                print 'Log Err'
+
+            return HttpResponse(json.dumps(ret))
+
     return render(request, 'salt_remote_exec_advance.html', {'ret':ret})
 
 @login_required
