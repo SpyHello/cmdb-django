@@ -41,6 +41,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
+                            <div class="loading"></div>
 
                             <div class="tab-content">
                                 <div class="tab-pane active" id="panel-single">
@@ -295,12 +296,14 @@ message:'请选择历史版本'
         var tgt_select = $("#{{ panel }} select[name='tgt_select']").val();
         var rollback_list = $("#{{ panel }} select[name='rollback_list']").val();
         var rollback_history = $("#{{ panel }} select[name='rollback_history_list']").val();
+        $(".loading").show();
         $.ajax({
 type:"POST",
 url:"{% url 'ajax_rollback' %}",
 data:{tgt_select:tgt_select,history_version:rollback_history,remote_path:rollback_list,check_type:"{{ panel }}"},
 dataType:"html",
 success:function(ret){
+$(".loading").hide();
 var ret = eval('('+ret+')');
 $("#{{ panel }} textarea[name='result']").html(ret);
 },

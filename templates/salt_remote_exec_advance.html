@@ -41,6 +41,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
+                            <div class="loading"></div>
 
                             <div class="tab-content">
                                 <div class="tab-pane active" id="panel-single">
@@ -152,11 +153,13 @@ function del(type){
 
 function send(type){
     $("#"+type+" div[name='ajax_result']").text();
+    $(".loading").show();
     $.ajax({
         type: "POST",
         url: "{% url 'advanced_manage' %}",
         data: $("#"+type+" form").serialize(),
         success: function(ret){
+            $(".loading").hide();
             var ret = eval('('+ret+')');
             var html = "<label class=\"control-label col-md-2 col-sm-3 col-xs-12\">返回结果</label><div class=\"col-md-9 col-sm-9 col-xs-12\"><fieldset><textarea class=\"form-control\" rows=\"15\">"+ret+"</textarea></fieldset></div>";
             $("#"+type+" div[name='ajax_result']").html(html);

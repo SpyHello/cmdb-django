@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 from asset_info import MultipleCollect
 from models import ServerAsset
@@ -31,13 +31,14 @@ def SheetWrite(sheet, row, serverasset, style):
     sheet.write(row,15, serverasset.manufacturer+' '+serverasset.productname, style)
     sheet.write(row,16, serverasset.idc, style)
 
+@login_required
 def get_server_asset_info(request):
     '''
     获取服务器资产信息
     '''
     ret = ''
     all_server = ServerAsset.objects.all()
-    idc = ['IDC01', 'IDC02']
+    idc=['IDC01', 'IDC02']
 
     if request.method == 'GET':
         if request.GET.has_key('aid'):
@@ -115,6 +116,7 @@ def get_server_asset_info(request):
 
     return render(request, 'server_asset_info.html', {'all_server':all_server})
 
+@login_required
 def idc_info_json(request):
-    idc = ['IDC01', 'IDC02']
+    idc=['IDC01', 'IDC02']
     return HttpResponse(json.dumps(idc))

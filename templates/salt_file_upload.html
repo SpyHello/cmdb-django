@@ -41,6 +41,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
+                            <div class="loading"></div>
 
                             <div class="tab-content">
                                 <div class="tab-pane active" id="panel-single">
@@ -182,6 +183,7 @@ extension:'zip,gz,bz2,sls,txt,html,conf',
         formdata.append('remote_path',remote_path);
         formdata.append('remark',remark);
         formdata.append('check_type',"{{ panel }}");
+        $(".loading").show();
         $.ajax({
 url:"{% url 'file_ajax' %}",
 type: "POST",
@@ -189,6 +191,7 @@ data: formdata,
 processData: false,
 contentType: false,
 success:function(ret){
+$(".loading").hide();
 var ret = eval('('+ret+')');
 $("#{{ panel }} textarea[name='result']").html(ret);
 $("#{{ panel }} input[name='file_path']").val("");

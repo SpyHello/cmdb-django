@@ -44,6 +44,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
+                            <div class="loading"></div>
 
                             <div class="tab-content">
                                 <div class="tab-pane active" id="panel-single">
@@ -149,12 +150,14 @@
                 return false;
                 }
                 var exec_type = $("#exec_type").val();
+                $(".loading").show();
                 $.ajax({
 type:"POST",
 url:"{% url 'ajax_result' %}",
 data:{jid:jid,"type":"deploy"},
 dataType:"html",
 success:function(ret) {
+$(".loading").hide();
 var ret = eval('('+ret+')');
 if(exec_type=="false"){
 $("#panel-single textarea[name='result']").html(ret);
@@ -209,12 +212,14 @@ message:'请选择模块'
             e.preventDefault();
             var tgt_select = $("#{{ panel }} select[name='tgt_select']").val();
             var module_list = $("#{{ panel }} select[name='module_list']").val();
+            $(".loading").show();
             $.ajax({
 type:"POST",
 url:"{% url 'ajax_deploy' %}",
 data:{tgt_select:tgt_select, module_list:module_list, check_type:"{{ panel }}"},
 dataType:"html",
 success:function(ret) {
+$(".loading").hide();
 var ret = eval('('+ret+')');
 $("#{{ panel }} textarea[name='result']").html(ret.ret);
 $("#jid").val(ret.jid);

@@ -41,7 +41,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-
+                            <div class="loading"></div>
                             <div class="tab-content">
                                 <div class="tab-pane active" id="panel-single">
                                     <form class="form-horizontal form-border" enctype="multipart/form-data">
@@ -142,12 +142,14 @@ $(function(){
             return false;
             }
             var exec_type = $("#exec_type").val();
+            $(".loading").show();
             $.ajax({
 type:"POST",
 url:"{% url 'ajax_result' %}",
 data:{jid:jid,"type":"exec"},
 dataType:"html",
 success:function(ret) {
+$(".loading").hide();
 var ret = eval('('+ret+')');
 var html = "<label class=\"control-label col-md-3 col-sm-3 col-xs-12\">返回结果</label><div class=\"col-md-6 col-sm-6 col-xs-12\"><fieldset><textarea class=\"form-control\" rows=\"10\">"+ret+"</textarea></fieldset></div>";
 if(exec_type=="false"){
@@ -189,12 +191,14 @@ message:'请填写命令'
             e.preventDefault();
             var tgt_select = $("#{{ panel }} select[name='tgt_select']").val();
             var arg = $("#{{ panel }} input[name='arg'").val();
+            $(".loading").show();
             $.ajax({
 type:"POST",
 url:"{% url 'ajax_exec' %}",
 data:{tgt_select:tgt_select, arg:arg, check_type:"{{ panel }}"},
 dataType:"html",
 success:function(ret) {
+$(".loading").hide();
 var ret = eval('('+ret+')');
 var html = "<label class=\"control-label col-md-3 col-sm-3 col-xs-12\">返回结果</label><div class=\"col-md-6 col-sm-6 col-xs-12\"><fieldset><textarea class=\"form-control\" rows=\"10\">"+ret.ret+"</textarea></fieldset></div>";
 $("#{{ panel }} div[name='ajax_result']").html(html);

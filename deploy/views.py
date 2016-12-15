@@ -51,7 +51,10 @@ def RemoteExec(request, fun, group=False):
                 is_group = True
             else:
                 tgt_select = request.POST.getlist('tgt_select[]')
-                tgt_list = ','.join(tgt_select)
+                if not tgt_select:
+                    tgt_list = request.POST.get('tgt_select')
+                else:
+                    tgt_list = ','.join(tgt_select)
                 expr_form = 'list'
             if fun == 'cmd.run':
                 arg = request.POST.get('arg')
@@ -604,35 +607,54 @@ def salt_file_download(request):
                 else:
                     break
 
+    sapi = SaltAPI(url=settings.SALT_API['url'],username=settings.SALT_API['user'],password=settings.SALT_API['password'])
+
     if request.method == 'POST':
-        tgt_select = request.POST.get('tgt_select', None)
-        remote_file = request.POST.get('remote_file', None)
-        sapi = SaltAPI(url=settings.SALT_API['url'],username=settings.SALT_API['user'],password=settings.SALT_API['password'])
-        ret_bak = sapi.file_bak(tgt_select, 'cp.push', remote_file, 'list')
-        if tgt_select == 'localhost':
-            return render(request,'redirect.html',{})
-        remote_path = remote_file.replace(remote_file.split('/')[-1],'')
-        dl_path = './media/salt/filedownload/user_%s/%s%s'%(request.user.id,tgt_select,remote_path)
-        dl_file = '%s%s'%(dl_path,remote_file.split('/')[-1])
-        if not os.path.exists(dl_path):
-            os.makedirs(dl_path)
-        try:
-            shutil.copy('/var/cache/salt/master/minions/%s/files/%s' % (tgt_select,remote_file), dl_file)
-            tar_file = make_tar(dl_file,'/tmp')
-            dl_filename = 'attachment;filename="{0}"'.format(tar_file.replace('/tmp/','%s%s'%(tgt_select,remote_path)))
-            ret = u'主机：%s\n结果：远程文件 %s 下载成功！'%(tgt_select,remote_file)
-            Message.objects.create(type=u'文件管理', user=request.user, action=u'文件下载', action_ip=UserIP(request),content=u'下载文件 \n%s'%ret)
-            response = StreamingHttpResponse(file_iterator(tar_file))
-            response['Content-Type'] = 'application/octet-stream'
-            response['Content-Disposition'] = dl_filename
+        if request.POST.get('type') == 'list':
+            rst = RemoteExec(request, fun='cmd.run')
+            return HttpResponse(json.dumps(rst['ret']))
+        else:
+            tgt_list = request.POST.get('tgt_select', None)
+            arg = request.POST.get('arg', None)
+            jid = sapi.remote_execution(tgt_list, 'cmd.run', 'if [ -d %s ];then echo 0;else echo 1;fi'%arg, 'list')
+            rst = sapi.salt_runner(jid)
+            if rst[tgt_list] == '0':
+                return HttpResponse(json.dumps(arg))
+            elif rst[tgt_list] == '1':
+                return HttpResponse(json.dumps("download"))
+            else:
+                print 'Err'
+    if request.method == 'GET':
+        if request.GET.get('type') == 'download':
+            tgt_select = request.GET.get('tgt_select', None)
+            arg = request.GET.get('arg', None)
+            remote_file = arg
+            ret_bak = sapi.file_bak(tgt_select, 'cp.push', remote_file, 'list')
+            if tgt_select == 'localhost':
+                return render(request,'redirect.html',{})
+            remote_path = remote_file.replace(remote_file.split('/')[-1],'')
+            dl_path = './media/salt/filedownload/user_%s/%s%s'%(request.user.id,tgt_select,remote_path)
+            dl_file = '%s%s'%(dl_path,remote_file.split('/')[-1])
+            if not os.path.exists(dl_path):
+                os.makedirs(dl_path)
+            try:
+                shutil.copy('/var/cache/salt/master/minions/%s/files/%s' % (tgt_select,remote_file), dl_file)
+                tar_file = make_tar(dl_file,'/tmp')
+                dl_filename = 'attachment;filename="{0}"'.format(tar_file.replace('/tmp/','%s%s'%(tgt_select,remote_path)))
+                ret = u'主机：%s\n结果：远程文件 %s 下载成功！'%(tgt_select,remote_file)
+                Message.objects.create(type=u'文件管理', user=request.user, action=u'文件下载', action_ip=UserIP(request),content=u'下载文件 \n%s'%ret)
+                response = StreamingHttpResponse(file_iterator(tar_file))
+                response['Content-Type'] = 'application/octet-stream'
+                response['Content-Disposition'] = dl_filename
+        
+                return response
+        
+            except:
+                print 'No such file or dirctory'
+                ret = u'主机：%s\n结果：远程文件 %s 下载失败，请确认文件是否存在！'%(tgt_select,remote_file)
+                Message.objects.create(type=u'文件管理', user=request.user, action=u'文件下载', action_ip=UserIP(request),content=u'下载文件 \n%s'%ret)
+                return render(request, 'salt_file_download.html', {'ret':ret})
     
-            return response
-    
-        except:
-            print 'No such file or dirctory'
-            ret = u'主机：%s\n结果：远程文件 %s 下载失败，请确认文件是否存在！'%(tgt_select,remote_file)
-            Message.objects.create(type=u'文件管理', user=request.user, action=u'文件下载', action_ip=UserIP(request),content=u'下载文件 \n%s'%ret)
-            return render(request, 'salt_file_download.html', {'ret':ret})
 
     return render(request, 'salt_file_download.html', {})
 
