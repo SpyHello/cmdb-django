@@ -38,10 +38,10 @@ def get_server_asset_info(request):
     '''
     获取服务器资产信息
     '''
+    idc = [i['idc_name'] for i in IdcAsset.objects.values('idc_name')]
     if request.method == 'GET':
         ret = ''
         all_server = ServerAsset.objects.all()
-        idc = [i['idc_name'] for i in IdcAsset.objects.values('idc_name')]
         if request.GET.has_key('aid'):
             aid = request.get_full_path().split('=')[1]
             server_detail = ServerAsset.objects.filter(id=aid)
