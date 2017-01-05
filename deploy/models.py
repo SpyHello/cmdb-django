@@ -34,6 +34,12 @@ class SaltHost(models.Model):
         return self.hostname
 
     class Meta:
+        default_permissions = ()
+        permissions = (
+            ("view_deploy", u"查看主机部署"),
+            ("edit_deploy", u"管理主机部署"),
+            ("edit_salthost", u"管理Salt主机")
+        )
         verbose_name = u'Salt主机授权'
         verbose_name_plural = u'Salt主机授权管理'
 
@@ -57,6 +63,10 @@ class SaltGroup(models.Model):
         return self.nickname
 
     class Meta:
+        default_permissions = ()
+        permissions = (
+            ("edit_saltgroup", u"管理Salt主机分组"),
+        )
         verbose_name = u'Salt分组'
         verbose_name_plural = u'Salt分组管理'
 
@@ -75,6 +85,10 @@ class ModuleUpload(models.Model):
         return self.name
 
     class Meta:
+        default_permissions = ()
+        permissions = (
+            ("edit_module", u"管理Salt模块"),
+        )
         verbose_name = u'Salt模块'
         verbose_name_plural = u'Salt模块管理'
 
@@ -96,9 +110,14 @@ class FileUpload(models.Model):
         return self.file_path
 
     class Meta:
+        default_permissions = ()
+        permissions = (
+            ("view_filemanage", u"查看文件管理"),
+            ("edit_fileupload", u"管理文件上传"),
+            ("edit_filedownload", u"管理文件下载"),
+        )
         verbose_name = u'文件上传'
         verbose_name = u'文件上传管理'
-
 
 class FileRollback(models.Model):
     user = models.ForeignKey(User)
@@ -119,6 +138,7 @@ class FileRollback(models.Model):
         return self.target
 
     class Meta:
+        default_permissions = ()
         ordering = ['-id']
         verbose_name = u'文件备份'
         verbose_name = u'文件备份管理'

@@ -31,11 +31,11 @@
                     </div>
                         <form class="form-horizontal form-border" method="get" action="" name="formName">
                     <div class="info">
-                        <a href="{% url 'server_info' %}?action=flush" class="btn btn-info btn-sm" role="button">刷新资产信息</a>
+                        <a href="{% url 'server_info' %}?action=flush" class="btn btn-info btn-sm" role="button" {% if not perms.asset.edit_asset %}disabled{% endif %}>刷新资产信息</a>
                         <button type="submit" class="btn btn-info btn-sm" name="export" value="check">导出</button>
                         <button type="submit" class="btn btn-info btn-sm" name="export" value="check_all">全部导出</button>
                     </div>
-                    <div class="x_content">
+                    <div class="x_content table-responsive" style="border:none">
                         <div class="ln_solid"></div>
                         <table id="datatable" class="table table-striped table-bordered">
                             <thead>
@@ -65,8 +65,8 @@
                                     <td>{{ server.cpu_model }}</td>
                                     <td>{{ server.cpu_nums }}</td>
                                     <td>{{ server.memory }}</td>
-                                    <td>{{ server.disk|safe }}</td>
-                                    <td>{{ server.network|safe }}</td>
+                                    <td>{{ server.disk|linebreaksbr }}</td>
+                                    <td>{{ server.network|linebreaksbr }}</td>
                                     <td>{{ server.virtual }}</td>
                                     <td>{{ server.sn }}</td>
                                     <td>{{ server.manufacturer }}<br />{{ server.productname  }}</td>

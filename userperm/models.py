@@ -14,6 +14,11 @@ class Message(models.Model):
     content = models.TextField(verbose_name=u'内容')
 
     class Meta:
+        default_permissions = ()
+        permissions = (
+            ("view_message", u"查看操作记录"),
+            ("edit_message", u"管理操作记录"),
+        )
         ordering = ['-audit_time']
         verbose_name = u'审计信息'
         verbose_name_plural = u'审计信息管理'
@@ -28,6 +33,7 @@ class UserCommandGroup(models.Model):
         return self.name
 
     class Meta:
+        default_permissions = ()
         verbose_name = u'远程命令分组'
         verbose_name_plural = u'远程命令分组管理'
 
@@ -42,6 +48,7 @@ class UserCommand(models.Model):
         return self.name
 
     class Meta:
+        default_permissions = ()
         verbose_name = u'远程命令'
         verbose_name_plural = u'远程命令管理'
 
@@ -53,6 +60,7 @@ class UserDirectory(models.Model):
         return self.name
     
     class Meta:
+        default_permissions = ()
         verbose_name = u'远程目录'
         verbose_name_plural = u'远程目录管理'
 

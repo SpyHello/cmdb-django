@@ -24,12 +24,10 @@ def UserIP(request):
 def user_command_list(request):
     if request.user.is_superuser:
         command_list = UserCommand.objects.all()
+        return render(request, 'userperm_command_list.html',
+                      {'all_command': command_list})
     else:
         raise Http404
-
-    return render(request, 'salt_command_list.html',
-                  {'all_command': command_list})
-
 
 @login_required
 def user_command_manage(request, id=None):
@@ -71,7 +69,7 @@ def user_command_manage(request, id=None):
         else:
             form = CommandForm(instance=command)
 
-        return render(request, 'salt_command_manage.html', {
+        return render(request, 'userperm_command_manage.html', {
                       'form': form, 'action': action, 'page_name': page_name})
     else:
         raise Http404
@@ -81,7 +79,7 @@ def user_command_manage(request, id=None):
 def user_dir_list(request):
     if request.user.is_superuser:
         dir_list = UserDirectory.objects.all()
-        return render(request, 'salt_directory_list.html',
+        return render(request, 'userperm_directory_list.html',
                       {'all_dir': dir_list})
     else:
         raise Http404
@@ -127,7 +125,7 @@ def user_dir_manage(request, id=None):
         else:
             form = DirectoryForm(instance=directory)
 
-        return render(request, 'salt_directory_manage.html', {
+        return render(request, 'userperm_directory_manage.html', {
                       'form': form, 'action': action, 'page_name': page_name})
     else:
         raise Http404
@@ -138,7 +136,6 @@ def audit_log(request):
     '''
     审计日志
     '''
-
     if request.user.is_superuser:
         logs = Message.objects.all()[:300]
 
@@ -146,9 +143,9 @@ def audit_log(request):
             if request.GET.has_key('aid'):
                 aid = request.get_full_path().split('=')[1]
                 log_detail = Message.objects.filter(id=aid)
-                return render(request, 'log_audit_detail.html',
+                return render(request, 'userperm_log_audit_detail.html',
                               {'log_detail': log_detail})
 
-        return render(request, 'log_audit.html', {'all_logs': logs})
+        return render(request, 'userperm_log_audit.html', {'all_logs': logs})
     else:
         raise Http404

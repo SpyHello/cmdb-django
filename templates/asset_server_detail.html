@@ -60,11 +60,11 @@
                                 </tr>
                                 <tr>
                                     <th>Locale</th>
-                                    <td>{{ i.locale|safe }}</td>
+                                    <td>{{ i.locale|linebreaksbr }}</td>
                                 </tr>
                                 <tr>
                                     <th>SELinux</th>
-                                    <td>{{ i.selinux|safe }}</td>
+                                    <td>{{ i.selinux|linebreaksbr }}</td>
                                 </tr>
                                 <tr>
                                     <th>CPU型号</th>
@@ -80,11 +80,11 @@
                                 </tr>
                                 <tr id="{{ i.pk }}">
                                     <th>硬盘分区 *</th>
-                                    <td><span class="edit" field="disk">{{ i.disk|safe }}</span></td>
+                                    <td><span class="edit" field="disk">{{ i.disk|linebreaksbr }}</span></td>
                                 </tr>
                                 <tr>
                                     <th>网络接口</th>
-                                    <td>{{ i.network|safe }}</td>
+                                    <td>{{ i.network|linebreaksbr }}</td>
                                 </tr>
                                 <tr id="{{ i.pk }}">
                                     <th>平台 *</th>
@@ -96,7 +96,7 @@
                                 </tr>
                                 <tr id="{{ i.pk }}">
                                     <th>厂商型号 *</th>
-                                    <td><span class="edit" field="manufacturer">{{ i.manufacturer }}</span><br /><span class="edit" feld="productname">{{ i.productname }}</span></td>
+                                    <td><span class="edit" field="manufacturer">{{ i.manufacturer }}</span><br /><span class="edit" field="productname">{{ i.productname }}</span></td>
                                 </tr>
                                 <tr id="{{ i.pk }}">
                                     <th>IDC机房 *</th>
@@ -118,24 +118,25 @@
 <script>
     $(function(){
             $('.editSelect').editable("{% url 'server_info' %}", {
-
                 loadurl: "{% url 'server_info' %}?get_idc",
                 type: "select",
                 submit: "确定",
                 cancel: "取消",
+                indicator: '<img src="/static/img/loader.gif">',
                 submitdata: function(value,settings){
                 return {id:$(this).parents("tr").attr("id"),field:$(this).attr('field')}
                 },
                 });
 
             $('.edit').editable("{% url 'server_info' %}", {
+                type: "textarea",
                 cancel: '取消',
                 submit: '确定',
                 submitdata: function(value,settings){
                 return {id:$(this).parents("tr").attr("id"),field:$(this).attr('field')}
                 },
                 placeholder: '单击编辑',
-                indicator: '<img src="/staic/img/loader.gif">',
+                indicator: '<img src="/static/img/loader.gif">',
                 tooltip: '单击进行编辑'
                 });
             })

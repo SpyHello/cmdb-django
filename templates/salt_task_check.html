@@ -28,7 +28,7 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
-
+                        <div class="loading"></div>
                         <form class="form-horizontal form-border" method="post" action="" enctype="multipart/form-data">
                             {% csrf_token %}
 
@@ -48,14 +48,7 @@
                                     </select>
                                 </div>
                             </div>
-                            {% if ret %}
-                            <div class="item form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12">返回结果</label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <textarea class="form-control">{{ ret }}</textarea>
-                                </div>
-                            </div>
-                            {% endif %}
+                            <div name="ajax_result" class="item form-group"></div>
                             <div class="ln_solid"></div>
                             <div class="form-group">
                                 <div class="col-md-6 col-md-offset-3">
@@ -73,7 +66,7 @@
 
 {% block js %}
 <script src="/static/js/bootstrapValidator.min.js"></script>
-
+<script src="/static/js/csrf.js"></script>
 <script>
     $(document).ready(function(){
             $("form").bootstrapValidator({
@@ -103,6 +96,24 @@ message:'请选择任务类型'
            }
 }
 })
+         .on('success.form.bv',function(e){
+            e.preventDefault();
+            var check_type = $("select[name='check_type']").val();
+            var jid = $("input[name='jid'").val();
+            $(".loading").show();
+            $.ajax({
+type:"POST",
+url:"{% url 'task_check' %}",
+data:{jid:jid, check_type:check_type},
+dataType:"html",
+success:function(ret) {
+$(".loading").hide();
+var ret = eval('('+ret+')');
+var html = "<label class=\"control-label col-md-3 col-sm-3 col-xs-12\">返回结果</label><div class=\"col-md-6 col-sm-6 col-xs-12\"><fieldset><textarea class=\"form-control\" rows=\"10\">"+ret+"</textarea></fieldset></div>";
+$("div[name='ajax_result']").html(html);
+},
+});
+            })
 })
 </script>
 {% endblock %}

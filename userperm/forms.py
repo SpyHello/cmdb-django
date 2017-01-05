@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 from django import forms
+from django.contrib.auth.models import User, Group
 from .models import *
 
 class CommandForm(forms.ModelForm):

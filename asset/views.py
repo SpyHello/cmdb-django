@@ -1,11 +1,13 @@
 # -*- coding: utf8 -*-
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.contrib.auth.decorators import login_required
 
 from asset_info import MultipleCollect
-from models import ServerAsset
+from models import ServerAsset, IdcAsset
 from deploy.models import SaltHost
+from geo import GeoInput
+from asset.forms import IdcAssetForm
 
 import StringIO
 import xlwt
@@ -19,13 +21,13 @@ def SheetWrite(sheet, row, serverasset, style):
     sheet.write(row,3, serverasset.saltversion, style)
     sheet.write(row,4, serverasset.zmqversion, style)
     sheet.write(row,5, serverasset.shell, style)
-    sheet.write(row,6, serverasset.locale.replace('<br />', '\n'), style)
-    sheet.write(row,7, serverasset.selinux.replace('<br />', '\n'), style)
+    sheet.write(row,6, serverasset.locale, style)
+    sheet.write(row,7, serverasset.selinux, style)
     sheet.write(row,8, serverasset.cpu_model, style)
     sheet.write(row,9, serverasset.cpu_nums, style)
     sheet.write(row,10, serverasset.memory, style)
-    sheet.write(row,11, serverasset.disk.replace('<br />', '\n'), style)
-    sheet.write(row,12, serverasset.network.replace('<br />', '\n'), style)
+    sheet.write(row,11, serverasset.disk, style)
+    sheet.write(row,12, serverasset.network, style)
     sheet.write(row,13, serverasset.virtual, style)
     sheet.write(row,14, serverasset.sn, style)
     sheet.write(row,15, serverasset.manufacturer+' '+serverasset.productname, style)
@@ -36,15 +38,14 @@ def get_server_asset_info(request):
     '''
     获取服务器资产信息
     '''
-    ret = ''
-    all_server = ServerAsset.objects.all()
-    idc=['IDC01', 'IDC02']
-
     if request.method == 'GET':
+        ret = ''
+        all_server = ServerAsset.objects.all()
+        idc = [i['idc_name'] for i in IdcAsset.objects.values('idc_name')]
         if request.GET.has_key('aid'):
             aid = request.get_full_path().split('=')[1]
             server_detail = ServerAsset.objects.filter(id=aid)
-            return render(request, 'server_asset_info_detail.html', {'server_detail': server_detail})
+            return render(request, 'asset_server_detail.html', {'server_detail': server_detail})
 
         if request.GET.has_key('get_idc'):
             return HttpResponse(json.dumps(idc))
@@ -104,6 +105,8 @@ def get_server_asset_info(request):
             output.seek(0)
             response.write(output.getvalue())
             return response
+        return render(request, 'asset_server_list.html', {'all_server': all_server})
+
     if request.method == 'POST':
         field = request.POST.get('field')
         value = request.POST.get('value')
@@ -114,9 +117,58 @@ def get_server_asset_info(request):
         ServerAsset.objects.filter(id=id).update(**{field:value})
         return HttpResponse(value)
 
-    return render(request, 'server_asset_info.html', {'all_server':all_server})
+@login_required
+def idc_asset_manage(request,aid=None,action=None):
+    """
+    Manage IDC
+    """
+    page_name = ''
+    if aid:
+        idc_list = get_object_or_404(IdcAsset, pk=aid)
+        if action == 'edit':
+            page_name = '编辑IDC机房'
+        if action == 'delete':
+            idc_list.delete()
+            return redirect('idc_asset_list')
+    else:
+        idc_list = IdcAsset()
+        action = 'add'
+        page_name = '新增IDC机房'
+
+    if request.method == 'POST':
+        form = IdcAssetForm(request.POST,instance=idc_list)
+        if form.is_valid():
+            if action == 'add':
+                form.save()
+                return redirect('idc_asset_list')
+            if action == 'edit':
+                form.save()
+                return redirect('idc_asset_list')
+    else:
+        form = IdcAssetForm(instance=idc_list)
+
+    return render(request, 'asset_idc_manage.html', {"form":form, "page_name":page_name, "action":action})
 
 @login_required
-def idc_info_json(request):
-    idc=['IDC01', 'IDC02']
-    return HttpResponse(json.dumps(idc))
+def idc_asset_list(request):
+    """
+    IDC列表、IDC详细
+    """
+    if request.method == 'GET':
+        if request.GET.has_key('aid'):
+            aid = request.get_full_path().split('=')[1]
+            idc_detail = IdcAsset.objects.filter(id=aid)
+            return render(request, 'asset_idc_detail.html', {'idc_detail': idc_detail})
+
+    all_idc = IdcAsset.objects.all()
+
+    return render(request, 'asset_idc_list.html', {'all_idc_list': all_idc})
+
+@login_required
+def geo_input(request):
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            if request.is_ajax():
+                GeoInput()
+                return HttpResponse(json.dumps('Loaded!'))
+    return redirect('idc_asset_list')

@@ -173,7 +173,8 @@
                 }
                                 
                 self.editing    = true;
-                self.revert     = $(self).html();
+                //self.revert     = $(self).html();
+                self.revert     = $(self).html().split("<br>").join("\n");
                 $(self).html('');
 
                 /* create the form object */
@@ -347,7 +348,8 @@
                                   url     : settings.target,
                                   success : function(result, status) {
                                       if (ajaxoptions.dataType == 'html') {
-                                        $(self).html(result);
+                                          result = result.split("\n").join("<br />");
+                                          $(self).html(result);
                                       }
                                       self.editing = false;
                                       callback.apply(self, [result, settings]);
@@ -424,7 +426,7 @@
                             });
                         /* otherwise use button with given string as text */
                         } else {
-                            var submit = $('<button type="submit" />');
+                            var submit = $('<button type="submit" class="btn btn-info btn-sm" />');
                             submit.html(settings.submit);                            
                         }
                         $(this).append(submit);
@@ -435,7 +437,7 @@
                             var cancel = $(settings.cancel);
                         /* otherwise use button with given string as text */
                         } else {
-                            var cancel = $('<button type="cancel" />');
+                            var cancel = $('<button type="cancel" class="btn btn-danger btn-sm" />');
                             cancel.html(settings.cancel);
                         }
                         $(this).append(cancel);
@@ -455,8 +457,9 @@
             },
             text: {
                 element : function(settings, original) {
-                    var input = $('<input />');
-                    if (settings.width  != 'none') { input.width(settings.width);  }
+                    var input = $('<input style="margin-bottom:5px;" class="form-control" />');
+                    //if (settings.width  != 'none') { input.width(settings.width);  }
+                    if (settings.width  != 'none') { input.width("100%");  }
                     if (settings.height != 'none') { input.height(settings.height); }
                     /* https://bugzilla.mozilla.org/show_bug.cgi?id=236791 */
                     //input[0].setAttribute('autocomplete','off');
@@ -467,7 +470,7 @@
             },
             textarea: {
                 element : function(settings, original) {
-                    var textarea = $('<textarea />');
+                    var textarea = $('<textarea style="margin-bottom:5px;min-height:35px;" class="form-control" />');
                     if (settings.rows) {
                         textarea.attr('rows', settings.rows);
                     } else if (settings.height != "none") {
@@ -476,7 +479,8 @@
                     if (settings.cols) {
                         textarea.attr('cols', settings.cols);
                     } else if (settings.width != "none") {
-                        textarea.width(settings.width);
+                        //textarea.width(settings.width);
+                        textarea.width("100%");
                     }
                     $(this).append(textarea);
                     return(textarea);
@@ -484,7 +488,7 @@
             },
             select: {
                element : function(settings, original) {
-                    var select = $('<select />');
+                    var select = $('<select style="margin-bottom:5px;" class="form-control" />');
                     $(this).append(select);
                     return(select);
                 },

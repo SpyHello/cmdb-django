@@ -17,7 +17,7 @@
 
                 <div class="x_panel" style="border-top:none;">
                     <div class="x_title">
-                        <a href="{% url 'module_add' %}" style="float:left;" class="btn btn-info btn-sm" role="button"><i class="fa fa-plus"></i></a>
+                        <a href="{% url 'module_add' %}" style="float:left;" class="btn btn-info btn-sm" role="button" {% if not perms.deploy.edit_module %}disabled="disabled"{% endif %}><i class="fa fa-plus"></i></a>
                         <h2>模块管理<small>| 模块部署</small> </h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
@@ -53,8 +53,8 @@
                                     <td>{{ m.module }}</td>
                                     <td>{{ m.remark }}</td>
                                     <td>
-                                        <a href="{% url 'module_edit' id=m.pk %}" class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>
-                                        <a href="{% url 'module_delete' %}?id={{ m.pk }}&delete=1" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></a>
+                                        <a href="{% url 'module_edit' id=m.pk %}" class="btn btn-info btn-xs" {% if not perms.deploy.edit_module %}disabled="disabled"{% endif %}><i class="fa fa-pencil"></i></a>
+                                        <a href="{% url 'module_delete' %}?id={{ m.pk }}&delete=1" class="btn btn-danger btn-xs" {% if not perms.deploy.edit_module %}disabled="disabled"{% endif %}><i class="fa fa-trash-o"></i></a>
                                     </td>
                                 </tr>
                                 {% endfor %}

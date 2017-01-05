@@ -15,7 +15,6 @@ Including another URLconf
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import url
-from django.contrib import admin
 from django.conf.urls import include, url
 
 from deploy import views as dviews
@@ -23,7 +22,6 @@ from userperm import views as uviews
 from asset import views as aviews
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
     url(r'', include('userauth.urls')),
     url(r'^user_perm/exec/$', uviews.user_command_list, name='command_list'),
     url(r'^user_perm/exec/manage/add/$', uviews.user_command_manage, name='command_add'),
@@ -62,5 +60,8 @@ urlpatterns = [
     url(r'^deploy/group_minions/$', dviews.salt_ajax_minions, name='ajax_minions'),
     url(r'^audit/log_audit/$', uviews.audit_log, name='log_audit'),
     url(r'^asset/server_info/$', aviews.get_server_asset_info, name='server_info'),
-    url(r'^asset/idc_info/get/$', aviews.idc_info_json, name="idc_info_json"),
+    url(r'^asset/idc/list/$', aviews.idc_asset_list, name='idc_asset_list'),
+    url(r'^asset/idc/add/$', aviews.idc_asset_manage, name='idc_add'),
+    url(r'^asset/idc/edit/(?P<aid>\d+)/(?P<action>[\w-]+)/$', aviews.idc_asset_manage, name='idc_manage'),
+    url(r'^asset/load_city/$', aviews.geo_input, name='load_city'),
 ]

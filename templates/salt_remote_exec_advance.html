@@ -7,7 +7,6 @@
 <div class="right_col" role="main">
     <div class="">
         <div class="clearfix"></div>
-
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="tabbable" id="tabs-754998">
@@ -19,7 +18,6 @@
                         <a href="#panel-group" data-toggle="tab">批量管理</a>
                         </li>
                     </ul>
-
                     <div class="x_panel" style="border-top:none;">
                         <div class="x_title">
                             <h2>远程管理 </h2>
@@ -42,7 +40,6 @@
                         </div>
                         <div class="x_content">
                             <div class="loading"></div>
-
                             <div class="tab-content">
                                 <div class="tab-pane active" id="panel-single">
                                     <div class="item form-group">
@@ -55,10 +52,10 @@
                                         {% csrf_token %}
                                         <div id="group0" class="item form-group">
                                             <label class="level col-md-2 col-sm-2 col-xs-12" style="text-align:right;height:34px;line-height:34px;">L0</label>
-                                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                            <div class="col-md-3 col-sm-3 col-xs-12" style="padding-bottom:5px;">
                                                 {% show_select_minions %}
                                             </div>
-                                            <div class="col-md-5 col-sm-5 col-xs-12">
+                                            <div class="col-md-5 col-sm-5 col-xs-12" style="padding-bottom:5px;">
                                                 <input type="text" class="form-control" name="arg" value="">
                                             </div>
                                             <div class="col-md-2 col-sm-2 col-xs-12" style="height:34px;line-height:34px;">
@@ -93,10 +90,10 @@
                                         {% csrf_token %}
                                         <div id="group0" class="item form-group">
                                             <label class="level col-md-2 col-sm-2 col-xs-12" style="text-align:right;height:34px;line-height:34px;">L0</label>
-                                            <div class="col-md-3 col-sm-3 col-xs-12">
+                                            <div class="col-md-3 col-sm-3 col-xs-12" style="padding-bottom:5px;">
                                                 {% show_groups %}
                                             </div>
-                                            <div class="col-md-5 col-sm-5 col-xs-12">
+                                            <div class="col-md-5 col-sm-5 col-xs-12" style="padding-bottom:5px;">
                                                 <input type="text" class="form-control" name="arg" value="">
                                             </div>
                                             <div class="col-md-2 col-sm-2 col-xs-12" style="height:34px;line-height:34px;">
@@ -130,7 +127,6 @@
     </div>
 </div>
 {% endblock %}
-
 {% block js %}
 <script src="/static/js/csrf.js"></script>
 <script>
@@ -141,7 +137,6 @@ function plus(type){
     $div.after( $group );
     $("#" + type + " #group" + num + " .level").text("L" + num);
 }
-
 function del(type){
     var $div = $("#"+type+" div[id^='group']:last");
     var num = parseInt( $div.prop("id").match(/\d+/g), 10 );
@@ -150,7 +145,6 @@ function del(type){
     }
     $("#" + type + " #group" + num).remove();
 }
-
 function send(type){
     $("#"+type+" div[name='ajax_result']").text();
     $(".loading").show();
@@ -166,7 +160,6 @@ function send(type){
         }
     })
 }
-
 $(function(){
     $("#panel-single button[name='plus']").click(function(){
             plus("panel-single");
@@ -174,23 +167,18 @@ $(function(){
     $("#panel-single button[name='del']").click(function(){
             del("panel-single");
         })
-
     $("#panel-single input[name='send']").click(function(){
             send("panel-single");
-
         })
-
     $("#panel-group button[name='plus']").click(function(){
             plus("panel-group");
         })
     $("#panel-group button[name='del']").click(function(){
             del("panel-group");
         })
-
     $("#panel-group input[name='send']").click(function(){
             send("panel-group");
         })
     })
-
 </script>
 {% endblock %}

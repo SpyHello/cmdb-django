@@ -47,7 +47,11 @@
                                 <div class="tab-pane active" id="panel-single">
                                     <form class="form-horizontal form-border" method="post" action="" enctype="multipart/form-data">
                                         {% csrf_token %}
-
+                                        {% if perms.deploy.edit_fileupload %}
+                                        <fieldset>
+                                        {% else %}
+                                        <fieldset disabled="disabled">
+                                        {% endif %}
                                         <div class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">目标主机 <span class="required">*</span>
                                             </label>
@@ -89,6 +93,7 @@
 
                                             </div>
                                         </div>
+                                        </fieldset>
                                     </form>
                                 </div>
                                 <div class="tab-pane" id="panel-group">

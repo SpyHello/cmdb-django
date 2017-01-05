@@ -31,7 +31,11 @@
 
                         <form onsubmit="return fileCheck();" class="form-horizontal form-border" method="post" action="" enctype="multipart/form-data">
                             {% csrf_token %}
-
+                            {% if perms.deploy.edit_module %}
+                            <fieldset>
+                            {% else %}
+                            <fieldset disabled="disabled">
+                            {% endif %}
                             {% for i in form %}
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ i.label_tag }} <span class="required">*</span>
@@ -61,6 +65,7 @@
                                     {% endifequal %}
                                 </div>
                             </div>
+                            </fieldset>
                         </form>
                     </div>
                 </div>

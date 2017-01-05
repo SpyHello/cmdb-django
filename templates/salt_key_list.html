@@ -29,7 +29,7 @@
                         </ul>
                         <div class="clearfix"></div>
                     </div>
-                    <div class="info"><a href="{% url 'key_import' %}" class="btn btn-info btn-sm" role="button" title="系统计划任务，如非必要，请勿执行此操作">刷新Salt主机列表</a></div>
+                    <div class="info"><a href="{% url 'key_import' %}" class="btn btn-info btn-sm" role="button" {% if not perms.deploy.edit_salthost %}disabled="disabled"{% endif %} data-toggle="tooltip" data-placement="right" title="系统计划任务，如非必要，请勿执行此操作">刷新Salt主机列表</a></div>
                     <div class="x_content">
                         <div class="ln_solid"></div>
                         <div class="info">
@@ -48,7 +48,7 @@
                                     <td>{{ m.hostname }}</td>
                                     <td>{{ m.alive }}</td>
                                     <td>
-                                        <a class="btn btn-info btn-sm" href="{% url 'key_add' %}?hostname={{ m.hostname }}&add=1"><i class="fa fa-plus-square "></i></a>
+                                        <a class="btn btn-info btn-sm" href="{% url 'key_add' %}?hostname={{ m.hostname }}&add=1" {% if not perms.deploy.edit_salthost %}disabled="disabled"{% endif %}><i class="fa fa-plus-square "></i></a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -74,8 +74,8 @@
                                     <td>{{ m.hostname }}</td>
                                     <td>{{ m.alive }}</td>
                                     <td>
-                                         <a class="btn btn-info btn-sm" href="{% url 'key_flush' %}?hostname={{ m.hostname  }}&flush=1"><i class="fa fa-refresh "></i></a>
-                                        <a class="btn btn-danger btn-sm" href="{% url 'key_delete' %}?hostname={{ m.hostname }}&delete=1"><i class="fa fa-trash-o "></i></a>
+                                        <a class="btn btn-info btn-sm" href="{% url 'key_flush' %}?hostname={{ m.hostname  }}&flush=1" {% if not perms.deploy.edit_salthost %}disabled="disabled"{% endif %}><i class="fa fa-refresh "></i></a>
+                                        <a class="btn btn-danger btn-sm" href="{% url 'key_delete' %}?hostname={{ m.hostname }}&delete=1" {% if not perms.deploy.edit_salthost %}disabled="disabled"{% endif %}><i class="fa fa-trash-o "></i></a>
                                     </td>
                                 </tr>
                                 {% endfor %}

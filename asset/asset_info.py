@@ -15,7 +15,7 @@ def GetInfoDict(r, arg):
     try:
         result = ''
         for k in r[arg]:
-            result = result + k + ': ' + str(r[arg][k]) + '<br />'
+            result = result + k + ': ' + str(r[arg][k]) + '\n'
     except:
         result = 'Nan'
     return result
@@ -66,7 +66,7 @@ def GetAssetInfo(tgt):
             ip = ''
             for j in ipaddr[i]:
                 ip = ip + j + '/'
-            network = network + i + ': ' + ip.strip('/') + '-' + hwaddr[i] + '<br />'
+            network = network + i + ': ' + ip.strip('/') + '-' + hwaddr[i] + '\n'
         info['network'] =  network
     except:
         info['network'] = 'Nan'
@@ -91,7 +91,7 @@ def GetAssetInfo(tgt):
                 s = ('%.1f'%r) + 'T'
         else:
             s = str(r) + 'M'
-        disk = disk + i + ': ' + s + '<br />'
+        disk = disk + i + ': ' + s + '\n'
     info['disk'] = disk
 
     asset_info.append(info)

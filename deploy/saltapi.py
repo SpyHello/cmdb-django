@@ -70,18 +70,6 @@ class SaltAPI(object):
         ret = content['return'][0]['data']['success']
         return ret
 
-    def local_run(self,fun,arg):
-        '''
-        用于本机执行命令
-        '''
-
-        params = {'client': 'local_async', 'tgt': 'localhost', 'fun': fun, 'arg':arg}
-        obj = urllib.urlencode(params)
-        self.token_id()
-        content = self.postRequest(obj)
-        ret = content['return'][0]['jid']
-        return ret
-
     def salt_runner(self,jid):
         '''
         通过jid获取执行结果
