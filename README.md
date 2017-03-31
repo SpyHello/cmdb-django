@@ -6,6 +6,7 @@ OMS自动化运维平台
 
 还好有不少人共享了各种各样的平台，其中就有OMS运维平台（binbin开源的OMS平台 链接：https://github.com/binbin91/oms ）
 所以自己拿来捣鼓，根据自己的需求，也算是写了点东西出来(批量管理、文件管理、用户管理及项目管理等)  
+  
 利用空闲时间，启用了全新模板，并不停的修改完善，想到什么就写些什么  
 放到github上也是希望可以给有需要的人一些帮助，也希望可以得到大家的提拔指点  
 
@@ -13,6 +14,7 @@ OMS自动化运维平台
 
 ![soms-user](https://imaojia.com/media/pictures/2017/02/17/soms-user.png)
 
+语言：python  
 框架：django  
 工具：saltstack
 
