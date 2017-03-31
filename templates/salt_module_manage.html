@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 {% load myinclusion %}
+{% block css %}
+<!-- iCheck -->
+<link href="/static/css/green.css" rel="stylesheet">
+{% endblock %}
 {% block content %}
 <div class="right_col" role="main">
     <div class="">
@@ -40,9 +44,24 @@
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ i.label_tag }} <span class="required">*</span>
                                 </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="col-md-6 col-sm-6 col-xs-12 inradio">
+                                    {% if forloop.counter == 3 %}
+                                    <a href="javascript:;" class="file">
+                                        {{ i }}
+                                        {{ i.errors }}选择模块
+                                    </a>
+                                        <label class="showFileName"></label>
+                                    {% elif forloop.counter == 4 %}
+                                        <fieldset {% if id %}disabled{% endif %}>
+                                        {{ i }}
+                                        {{ i.errors }}
+                                        <div class="user_groups"></div>
+                                        </fieldset>
+
+                                    {% else %}
                                     {{ i }}
                                     {{ i.errors }}
+                                    {% endif %}
                                 </div>
                             </div>
                             {% endfor %}
@@ -76,8 +95,16 @@
 {% endblock %}
 
 {% block js %}
+<script type="text/javascript" src="/static/js/icheck.min.js"></script>
+<script type="text/javascript" src="/static/js/csrf.js"></script>
 <script type="text/javascript">
-
+$(".file").on("change","input[type='file']",function(){
+    var filePath=$(this).val();
+    var arr=filePath.split('\\');
+    var fileName=arr[arr.length-1];
+    $(".showFileName").html(fileName);
+    }
+);
 
     function fileCheck() {
         var filepath = $("input[name='upload_path']").val();
@@ -113,6 +140,33 @@
 $("#id_upload_path").change(function() {
         fileCheck();
         });
+
+function radioChange(p) {
+    var visible = $(p).prev().val();
+    if(visible==1){
+    $.ajax({
+type:"POST",
+url:"{% url 'ajax_user_groups' %}",
+data:{},
+dataType:"html",
+success:function(ret){
+var ret = eval('('+ret+')');
+var html = '';
+for(i in ret){
+    html = html + "<option name='group' value='"+i+"'>"+ret[i]+"</option>";
+}
+html = "<select id='user_group' name='user_group' class='form-control' required='' data-bv-notempty='' data-bv-field='user_group'>" +
+    html + "</select";
+
+    $(".user_groups").html(html);
+}
+})
+    }
+}
+
+{% if id %}
+$("input[name='visible']").attr("disabled","disabled");
+{% endif %}
 
 </script>
 {% endblock %}

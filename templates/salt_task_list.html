@@ -49,7 +49,7 @@
                                     <td>{{ i.audit_time|date:"Y-m-d H:i:s" }}</td>
                                     <td>{{ i.type }}</td>
                                     <td>{{ i.action }}</td>
-                                    <td>{{ i.content|truncatewords:"10" }}</td>
+                                    <td>{{ i.content|safe|truncatewords:"10" }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

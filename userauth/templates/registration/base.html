@@ -25,11 +25,12 @@
       <div class="login_wrapper">
         <div class="animate form login_form">
           <section class="login_content">
-	    <form method="post" action="">
+          <h1>用户登录</h1>
+	        <form method="post" action="">
             {% csrf_token %}
-              <h1>{{ title }}</h1>
 		{% block content %}
 		{% endblock %}
+        </form>
     	<!-- footer -->
               <div class="clearfix"></div>
               <br />
@@ -38,7 +39,6 @@
                 <p>Copyright &copy; 2015-{% now "Y" %}. Powered by <a href="http://imaojia.com" target="_blank">爱猫家</a>. <br />Privacy and Terms</p>
               </div>
     	<!-- footer end -->
-            </form>
           </section>
         </div>
       </div>

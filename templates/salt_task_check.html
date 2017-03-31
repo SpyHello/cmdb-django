@@ -28,14 +28,18 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
-                        <div class="loading"></div>
+                        <div class="modal-loading"></div>
                         <form class="form-horizontal form-border" method="post" action="" enctype="multipart/form-data">
                             {% csrf_token %}
-
+                            {% if perms.deploy.edit_deploy %}
+                            <fieldset>
+                            {% else %}
+                            <fieldset disabled="disabled">
+                            {% endif %}
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">任务JID</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input class="form-control" id="id_name" maxlength="50" name="jid" type="text" required="">
+                                    <input class="form-control" id="jid" maxlength="50" name="jid" type="text" required="">
                                 </div>
                             </div>
                             <div class="item form-group">
@@ -55,7 +59,30 @@
                                     <button id="send" type="submit" class="btn btn-success">查询</button>
                                 </div>
                             </div>
+                            </fieldset>
                         </form>
+
+                    <div id="result"></div>
+                    <!-- 模态框（Modal） -->
+                    <div class="modal fade" id="result-modal-salt" tabindex="-1" role="dialog" aria-labelledby="result-modal" aria-hidden="true">
+                        <div class="modal-loading"></div>
+                        <div class="modal-dialog">
+                            <div class="modal-content" style="background-color:#272822;color:#00ff00;">
+                                <div class="modal-header" style="border-bottom:1px solid #666">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <b class="modal-title" id="result-modal" style="color:#f8f8f2">运行结果</b>&nbsp;
+                                </div>
+                                <div id="modal-body" class="modal-body">
+                                    <div class="panel-group" id="accordion">
+                                    </div>
+                                </div>
+                                <!--<div class="modal-footer">
+
+                                </div>-->
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
                     </div>
                 </div>
             </div>
@@ -66,7 +93,9 @@
 
 {% block js %}
 <script src="/static/js/bootstrapValidator.min.js"></script>
+<script src="/static/js/bootstrap-modal-vertical.js"></script>
 <script src="/static/js/csrf.js"></script>
+<script src="/static/js/salt_result.js"></script>
 <script>
     $(document).ready(function(){
             $("form").bootstrapValidator({
@@ -99,20 +128,7 @@ message:'请选择任务类型'
          .on('success.form.bv',function(e){
             e.preventDefault();
             var check_type = $("select[name='check_type']").val();
-            var jid = $("input[name='jid'").val();
-            $(".loading").show();
-            $.ajax({
-type:"POST",
-url:"{% url 'task_check' %}",
-data:{jid:jid, check_type:check_type},
-dataType:"html",
-success:function(ret) {
-$(".loading").hide();
-var ret = eval('('+ret+')');
-var html = "<label class=\"control-label col-md-3 col-sm-3 col-xs-12\">返回结果</label><div class=\"col-md-6 col-sm-6 col-xs-12\"><fieldset><textarea class=\"form-control\" rows=\"10\">"+ret+"</textarea></fieldset></div>";
-$("div[name='ajax_result']").html(html);
-},
-});
+            result_check(check_type, "{% url 'ajax_result' %}");
             })
 })
 </script>

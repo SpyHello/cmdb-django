@@ -1,4 +1,13 @@
-# -*- coding: utf8 -*-
+#!/usr/bin/env python
+# coding: utf8
+'''
+@author: qitan
+@contact: qqing_lai@hotmail.com
+@file: models.py
+@time: 2017/3/30 15:34
+@desc:
+'''
+
 from __future__ import unicode_literals
 
 from django.db import models

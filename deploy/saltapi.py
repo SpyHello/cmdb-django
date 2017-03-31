@@ -1,4 +1,12 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# coding: utf8
+'''
+@author: qitan
+@contact: qqing_lai@hotmail.com
+@file: saltapi.py
+@time: 2017/3/30 15:29
+@desc:
+'''
 
 import urllib2,urllib
 
@@ -81,7 +89,19 @@ class SaltAPI(object):
         content = self.postRequest(obj)
         ret = content['return'][0]
         return ret
-        
+
+    def salt_running_jobs(self):
+        '''
+        获取运行中的任务
+        '''
+
+        params = {'client':'runner', 'fun':'jobs.active'}
+        obj = urllib.urlencode(params)
+        self.token_id()
+        content = self.postRequest(obj)
+        ret = content['return'][0]
+        return ret
+
     def remote_execution(self,tgt,fun,arg,expr_form):
         '''
         异步执行远程命令、部署模块
@@ -102,11 +122,45 @@ class SaltAPI(object):
         ret = content['return'][0]
         return ret
 
+    def salt_state(self,tgt,arg,expr_form):
+        '''
+        sls文件
+        '''
+        params = {'client': 'local', 'tgt': tgt, 'fun': 'state.sls', 'arg': arg, 'expr_form': expr_form}
+        obj = urllib.urlencode(params)
+        self.token_id()
+        content = self.postRequest(obj)
+        ret = content['return'][0]
+        return ret
+
+    def project_manage(self,tgt,fun,arg1,arg2,arg3,arg4,arg5,expr_form):
+        '''
+        文件上传、备份到minion、项目管理
+        '''
+        params = {'client': 'local', 'tgt': tgt, 'fun': fun, 'arg': arg1, 'expr_form': expr_form}
+        # 拼接url参数
+        params2 = {'arg':arg2}
+        arg_add = urllib.urlencode(params2)
+        obj = urllib.urlencode(params)
+        obj = obj + '&' + arg_add
+        params3 = {'arg': arg3}
+        arg_add = urllib.urlencode(params3)
+        obj = obj + '&' + arg_add
+        params4 = {'arg': arg4}
+        arg_add = urllib.urlencode(params4)
+        obj = obj + '&' + arg_add
+        params5 = {'arg': arg5}
+        arg_add = urllib.urlencode(params5)
+        obj = obj + '&' + arg_add
+        self.token_id()
+        content = self.postRequest(obj)
+        ret = content['return'][0]
+        return ret
+
     def file_copy(self,tgt,fun,arg1,arg2,expr_form):
         '''
-        文件上传
+        文件上传、备份到minion、项目管理
         '''
-
         params = {'client': 'local', 'tgt': tgt, 'fun': fun, 'arg': arg1, 'expr_form': expr_form}
         # 拼接url参数
         params2 = {'arg':arg2}
@@ -120,11 +174,27 @@ class SaltAPI(object):
 
     def file_bak(self,tgt,fun,arg,expr_form):
         '''
-        文件备份
+        文件备份到master
         '''
-
         params = {'client': 'local', 'tgt': tgt, 'fun': fun, 'arg': arg, 'expr_form': expr_form}
         obj = urllib.urlencode(params)
+        self.token_id()
+        content = self.postRequest(obj)
+        ret = content['return'][0]
+        return ret
+
+    def file_manage(self,tgt,fun,arg1,arg2,arg3,expr_form):
+        '''
+        文件回滚
+        '''
+        params = {'client': 'local', 'tgt': tgt, 'fun': fun, 'arg': arg1, 'expr_form': expr_form}
+        params2 = {'arg': arg2}
+        arg_add = urllib.urlencode(params2)
+        obj = urllib.urlencode(params)
+        obj = obj + '&' + arg_add
+        params3 = {'arg': arg3}
+        arg_add_2 = urllib.urlencode(params3)
+        obj = obj + '&' + arg_add_2
         self.token_id()
         content = self.postRequest(obj)
         ret = content['return'][0]

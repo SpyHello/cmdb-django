@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load myinclusion %}
+{% load myfilter %}
 {% block content %}
 <div class="right_col" role="main">
     <div class="">
@@ -65,7 +65,9 @@
 
                                 <div class="bs-example" data-example-id="simple-jumbotron">
                                     <div class="x_content">
-                                        {% show_str i.command %}
+                                        {% for i in i.command|str_split:',' %}
+                                            <span class="tag">{{ i }}</span>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>

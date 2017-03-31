@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% block css %}
+<!-- iCheck -->
+<link href="/static/css/green.css" rel="stylesheet">
+{% endblock %}
 {% block content %}
 <div class="right_col" role="main">
     <div class="">
@@ -28,14 +32,14 @@
                     </div>
                     <div class="x_content">
 
-                        <form onsubmit="return fileCheck();" class="form-horizontal form-border" method="post" action="" enctype="multipart/form-data">
+                        <form class="form-horizontal form-border" method="post" action="" enctype="multipart/form-data">
                             {% csrf_token %}
 
                             {% for i in form %}
                             <div class="item form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ i.label_tag }} <span class="required">*</span>
                                 </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="col-md-6 col-sm-6 col-xs-12 inradio">
                                     {{ i }}
                                     {{ i.errors }}
                                 </div>
@@ -62,6 +66,8 @@
 {% endblock %}
 
 {% block js %}
+<!-- iCheck --->
+<script type="text/javascript" src="/static/js/icheck.min.js"></script>
 <!-- jQuery Tags Input -->
 <script src="/static/js/jquery.tagsinput.js"></script>
 <!-- jQuery Tags Input -->

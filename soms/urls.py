@@ -15,6 +15,7 @@ Including another URLconf
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import url
+from django.contrib import admin
 from django.conf.urls import include, url
 
 from deploy import views as dviews
@@ -22,6 +23,7 @@ from userperm import views as uviews
 from asset import views as aviews
 
 urlpatterns = [
+    url(r'^admin/', admin.site.urls),
     url(r'', include('userauth.urls')),
     url(r'^user_perm/exec/$', uviews.user_command_list, name='command_list'),
     url(r'^user_perm/exec/manage/add/$', uviews.user_command_manage, name='command_add'),
@@ -36,6 +38,7 @@ urlpatterns = [
     url(r'^deploy/key_manage$', dviews.salt_key_manage, name='key_add'),
     url(r'^deploy/key_manage$', dviews.salt_key_manage, name='key_delete'),
     url(r'^deploy/key_manage$', dviews.salt_key_manage, name='key_flush'),
+    url(r'^deploy/key_manage$', dviews.salt_key_manage, name='key_manage'),
     url(r'^deploy/group_list/$', dviews.salt_group_list, name='group_list'),
     url(r'^deploy/group_manage/add/$', dviews.salt_group_manage, name='group_add'),
     url(r'^deploy/group_manage/delete$', dviews.salt_group_manage, name='group_delete'),
@@ -47,6 +50,7 @@ urlpatterns = [
     url(r'^deploy/remote_execution/$', dviews.salt_remote_exec, name='remote_exec'),
     url(r'^deploy/remote_execution/exec/$', dviews.salt_ajax_remote_exec, name='ajax_exec'),
     url(r'^deploy/advanced_manage/$', dviews.salt_advanced_manage, name='advanced_manage'),
+    url(r'^deploy/remote_exec/check_result/$', dviews.salt_ajax_result, name='ajax_result'),
     url(r'^deploy/module_deploy/$', dviews.salt_module_deploy, name='module_deploy'),
     url(r'^deploy/module_deploy/deploy/$', dviews.salt_ajax_module_deploy, name='ajax_deploy'),
     url(r'^deploy/file_manage/download/$', dviews.salt_file_download, name='file_download'),
@@ -56,8 +60,13 @@ urlpatterns = [
     url(r'^deploy/file_manage/rollback/ajax_rollback$', dviews.salt_ajax_file_rollback, name='ajax_rollback'),
     url(r'^deploy/task_list/$', dviews.salt_task_list, name='task_list'),
     url(r'^deploy/task_check/$', dviews.salt_task_check, name='task_check'),
-    url(r'^deploy/remote_exec/check_result/$', dviews.salt_ajax_result, name='ajax_result'),
+    url(r'^deploy/task_running/$', dviews.salt_task_running, name='task_running'),
     url(r'^deploy/group_minions/$', dviews.salt_ajax_minions, name='ajax_minions'),
+    url(r'^deploy/project_list/$', dviews.project_list, name='project_list'),
+    url(r'^deploy/project_manage/add/$', dviews.project_manage, name='project_add'),
+    url(r'^deploy/project_manage/delete$', dviews.project_manage, name='project_delete'),
+    url(r'^deploy/project_manage/(?P<id>\d+)/edit/$', dviews.project_manage, name='project_edit'),
+    url(r'^deploy/project_manage/deploy/$', dviews.project_deploy, name='project_deploy'),
     url(r'^audit/log_audit/$', uviews.audit_log, name='log_audit'),
     url(r'^asset/server_info/$', aviews.get_server_asset_info, name='server_info'),
     url(r'^asset/idc/list/$', aviews.idc_asset_list, name='idc_asset_list'),

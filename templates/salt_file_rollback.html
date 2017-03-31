@@ -22,7 +22,7 @@
 
                     <div class="x_panel" style="border-top:none;">
                         <div class="x_title">
-                            <h2>远程管理 </h2>
+                            <h2>文件管理 </h2>
                             <ul class="nav navbar-right panel_toolbox">
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </li>
@@ -56,7 +56,7 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">目标主机 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                {% show_select_minions %}
+                                                {% show_user_group_minions request.user.pk request.user.is_superuser 'single' %}
                                             </div>
                                         </div>
                                         <div class="item form-group">
@@ -81,9 +81,7 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">返回结果
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <fieldset disabled>
                                                     <textarea class="form-control" name="result" rows="10">{{ ret }}</textarea>
-                                                </fieldset>
                                             </div>
                                         </div>
                                         <div class="ln_solid"></div>
@@ -99,12 +97,16 @@
                                 <div class="tab-pane" id="panel-group">
                                     <form class="form-horizontal form-border" method="post" action="" enctype="multipart/form-data">
                                         {% csrf_token %}
-
+                                        {% if perms.deploy.edit_fileupload %}
+                                        <fieldset>
+                                        {% else %}
+                                        <fieldset disabled="disabled">
+                                        {% endif %}
                                         <div class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">目标主机 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                {% show_groups %}
+                                                {% show_user_group_groups request.user.pk request.user.is_superuser %}
                                             </div>
                                         </div>
                                         <div name="group_minions" class="item form-group">
@@ -131,9 +133,7 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">返回结果
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <fieldset disabled>
                                                     <textarea class="form-control" name="result" rows="10">{{ ret }}</textarea>
-                                                </fieldset>
                                             </div>
                                         </div>
                                         <div class="ln_solid"></div>
@@ -142,6 +142,7 @@
                                                 <input type="submit" name="send" class="btn btn-success" value="提交">
                                             </div>
                                         </div>
+                                        </fieldset>
                                     </form>
                                 </div>
                             </div>
@@ -185,16 +186,18 @@ $(function(){
             return false;
             });
         $("#{{ panel }} select[name='rollback_list']").bind("change",function(){
+            var rollback_list = $("#{{ panel }} select[name='rollback_list']").val();
             var rollback_remark = $("#{{ panel }} select[name='rollback_history_list']").val();
             var tgt_select = $("#{{ panel }} select[name='tgt_select']").val();
-            gethistoryremark("{{ panel }}",tgt_select,rollback_remark);
+            gethistoryremark("{{ panel }}",tgt_select,rollback_list,rollback_remark);
             return false;
             });
         $("#{{ panel }} select[name='rollback_history_list']").bind("change",function(){
+            var rollback_list = $("#{{ panel }} select[name='rollback_list']").val();
             var rollback_remark = $("#{{ panel }} select[name='rollback_history_list']").val();
             var tgt_select = $("#{{ panel }} select[name='tgt_select']").val();
             $("#{{ panel }} div[name='rollback_history_remark']").html('');
-            gethistoryremark("{{ panel }}",tgt_select,rollback_remark);
+            gethistoryremark("{{ panel }}",tgt_select,rollback_list,rollback_remark);
             return false;
             });
         {% endfor %}
@@ -238,7 +241,7 @@ var rst = rst + "<option name=\"module\" value=\"" + ret[i] + "\" title=\"\">"+r
 }
 $("#"+_panel+" select[name='rollback_history_list']").html(rst);
 $("#"+_panel+" select[name='rollback_history_list']").get(0).selectedIndex = 0;
-gethistoryremark(_panel, _host, $("#"+_panel+" select[name='rollback_history_list']").val());
+gethistoryremark(_panel, _host, _filename, $("#"+_panel+" select[name='rollback_history_list']").val());
 },
 errors:function(e){
 alert("error");
@@ -246,11 +249,11 @@ alert("error");
 });
 }
 
-function gethistoryremark(_panel, _host, _remark){
+function gethistoryremark(_panel, _host, _rollback_list, _remark){
     $.ajax({
 type:"POST",
 url:"{% url 'ajax_rollback' %}",
-data:{rollback_remark:_remark,tgt_select:_host, check_type:"rollback_history_remark",get_type:_panel},
+data:{rollback_remark:_remark,tgt_select:_host,rollback_list:_rollback_list,check_type:"rollback_history_remark",get_type:_panel},
 datatype:"html",
 success:function(ret){
 var ret = eval('('+ret+')');
@@ -300,12 +303,12 @@ message:'请选择历史版本'
         e.preventDefault();
         var tgt_select = $("#{{ panel }} select[name='tgt_select']").val();
         var rollback_list = $("#{{ panel }} select[name='rollback_list']").val();
-        var rollback_history = $("#{{ panel }} select[name='rollback_history_list']").val();
+        var tag = $("#{{ panel }} select[name='rollback_history_list']").val();
         $(".loading").show();
         $.ajax({
 type:"POST",
 url:"{% url 'ajax_rollback' %}",
-data:{tgt_select:tgt_select,history_version:rollback_history,remote_path:rollback_list,check_type:"{{ panel }}"},
+data:{tgt_select:tgt_select,tag:tag,remote_path:rollback_list,check_type:"{{ panel }}"},
 dataType:"html",
 success:function(ret){
 $(".loading").hide();

@@ -47,7 +47,7 @@
                                 </tr>
                                 <tr>
                                     <th>详细信息</th>
-                                    <td>{{ i.content|escape|linebreaks }}</td>
+                                    <td>{{ i.content|safe }}</td>
                                 </tr>
                                 {% endfor %}
                             </thead>

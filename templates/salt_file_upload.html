@@ -22,7 +22,7 @@
 
                     <div class="x_panel" style="border-top:none;">
                         <div class="x_title">
-                            <h2>远程管理 </h2>
+                            <h2>文件管理 </h2>
                             <ul class="nav navbar-right panel_toolbox">
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </li>
@@ -56,7 +56,7 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">目标主机 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                {% show_minions %}
+                                                {% show_user_group_minions request.user.pk request.user.is_superuser 'multiple' %}
                                             </div>
                                         </div>
                                         {% for i in form %}
@@ -73,9 +73,7 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">返回结果
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <fieldset disabled>
                                                     <textarea class="form-control" name="result" rows="10">{{ ret }}</textarea>
-                                                </fieldset>
                                             </div>
                                         </div>
                                         <div class="ln_solid"></div>
@@ -90,19 +88,23 @@
                                 <div class="tab-pane" id="panel-group">
                                     <form class="form-horizontal form-border" enctype="multipart/form-data">
                                         {% csrf_token %}
-
+                                        {% if perms.deploy.edit_fileupload %}
+                                        <fieldset>
+                                        {% else %}
+                                        <fieldset disabled="disabled">
+                                        {% endif %}
                                         <div class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">目标主机 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                {% show_groups %}
+                                                {% show_user_group_groups request.user.pk request.user.is_superuser %}
                                             </div>
                                         </div>
                                         <div name="group_minions" class="item form-group">
                                         </div>
                                         {% for i in form %}
                                         <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ i.label_tag }} <span class="required">*</span>
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ i.label_tag }}
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 {{ i }}
@@ -114,9 +116,7 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">返回结果
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <fieldset disabled>
                                                     <textarea class="form-control" name="result" rows="10">{{ ret }}</textarea>
-                                                </fieldset>
                                             </div>
                                         </div>
                                         <div class="ln_solid"></div>
@@ -125,6 +125,7 @@
                                                 <input type="submit" name="send" class="btn btn-success" value="提交">
                                             </div>
                                         </div>
+                                        </fieldset>
                                     </form>
                                 </div>
                             </div>
@@ -169,7 +170,7 @@ notEmpty:{
 message:'请选择文件'
 },
 file: {
-extension:'zip,gz,bz2,sls,txt,html,conf',
+extension:'zip,gz,bz2,sls,txt,html,conf,lua,sh,py',
           message:'不支持该类型文件上传'
       }
 }

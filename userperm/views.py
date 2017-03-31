@@ -1,4 +1,12 @@
-# -*- coding: utf8 -*-
+#!/usr/bin/env python
+# coding: utf8
+'''
+@author: qitan
+@contact: qqing_lai@hotmail.com
+@file: views.py
+@time: 2017/3/30 16:10
+@desc:
+'''
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404
@@ -49,7 +57,7 @@ def user_command_manage(request, id=None):
                 command = get_object_or_404(UserCommand, pk=id)
                 command.delete()
 
-                Message.objects.create(type=u'权限控制', user=request.user, action=u'删除命令', action_ip=UserIP(request),content=u'删除命令 %s'%command.name)
+                Message.objects.create(type=u'权限控制', user=request.user.first_name, action=u'删除命令', action_ip=UserIP(request),content=u'删除命令 %s'%command.name)
 
                 return redirect('command_list')
 
@@ -62,7 +70,7 @@ def user_command_manage(request, id=None):
                     form.save
                 command.save()
 
-                Message.objects.create(type=u'权限控制', user=request.user, action=page_name, action_ip=UserIP(request),content='%s %s'%(page_name,command.name))
+                Message.objects.create(type=u'权限控制', user=request.user.first_name, action=page_name, action_ip=UserIP(request),content='%s %s'%(page_name,command.name))
 
                 return redirect('command_list')
 
@@ -105,7 +113,7 @@ def user_dir_manage(request, id=None):
                 directory = get_object_or_404(UserDirectory, pk=id)
                 directory.delete()
 
-                Message.objects.create(type=u'权限控制', user=request.user, action=u'删除目录', action_ip=UserIP(request),content=u'删除目录 %s'%directory.name)
+                Message.objects.create(type=u'权限控制', user=request.user.first_name, action=u'删除目录', action_ip=UserIP(request),content=u'删除目录 %s'%directory.name)
 
                 return redirect('dir_list')
 
@@ -118,7 +126,7 @@ def user_dir_manage(request, id=None):
                     form.save
                 directory.save()
 
-                Message.objects.create(type=u'权限控制', user=request.user, action=page_name, action_ip=UserIP(request),content='%s %s'%(page_name,directory.name))
+                Message.objects.create(type=u'权限控制', user=request.user.first_name, action=page_name, action_ip=UserIP(request),content='%s %s'%(page_name,directory.name))
 
                 return redirect('dir_list')
 

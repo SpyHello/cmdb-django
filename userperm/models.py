@@ -1,8 +1,17 @@
-# -*- coding:utf8 -*-
+#!/usr/bin/env python
+# coding: utf8
+'''
+@author: qitan
+@contact: qqing_lai@hotmail.com
+@file: models.py
+@time: 2017/3/30 16:05
+@desc:
+'''
+
 from __future__ import unicode_literals
 
 from django.db import models
-
+#from userauth.models import UserGroup
 # Create your models here.
 
 class Message(models.Model):
@@ -23,38 +32,29 @@ class Message(models.Model):
         verbose_name = u'审计信息'
         verbose_name_plural = u'审计信息管理'
 
-class UserCommandGroup(models.Model):
-    name = models.CharField(
-        max_length=80,
-        unique=True,
-        verbose_name=u'命令别名')
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        default_permissions = ()
-        verbose_name = u'远程命令分组'
-        verbose_name_plural = u'远程命令分组管理'
-
 class UserCommand(models.Model):
     name = models.CharField(
         max_length=80,
         unique=True,
         verbose_name=u'命令别名')
     command = models.TextField(blank=True, verbose_name=u'系统命令')
+    is_allow = models.BooleanField(default=True, verbose_name=u'状态')
 
     def __str__(self):
         return self.name
 
     class Meta:
         default_permissions = ()
+        permissions = (
+            ("edit_remote_permission", u"管理远程权限"),
+        )
         verbose_name = u'远程命令'
         verbose_name_plural = u'远程命令管理'
 
 class UserDirectory(models.Model):
     name = models.CharField(max_length=80, unique=True, verbose_name=u'目录别名')
     directory = models.TextField(blank=True, verbose_name=u'系统目录')
+    is_allow = models.BooleanField(default=True, verbose_name=u'状态')
 
     def __str__(self):
         return self.name

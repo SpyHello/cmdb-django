@@ -113,6 +113,7 @@
 </div>
 {% endblock %}
 {% block js %}
+{% if perms.asset.edit_asset %}
 <script src="/static/js/jquery.jeditable.js"></script>
 <script src="/static/js/csrf.js"></script>
 <script>
@@ -141,4 +142,5 @@
                 });
             })
 </script>
+{% endif %}
 {% endblock %}

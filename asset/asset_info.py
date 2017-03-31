@@ -1,8 +1,11 @@
-# -*- coding: utf8 -*-
+#!/usr/bin/env python
+# coding: utf8
 '''
-通过salt api获取主机信息，进行格式化输出
-
-- qitan 20161017
+@author: qitan
+@contact: qqing_lai@hotmail.com
+@file: asset_info.py
+@time: 2017/3/30 15:33
+@desc:
 '''
 
 from deploy.saltapi import SaltAPI

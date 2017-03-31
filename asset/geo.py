@@ -1,4 +1,12 @@
-# -*- coding: utf8 -*-
+#!/usr/bin/env python
+# coding: utf8
+'''
+@author: qitan
+@contact: qqing_lai@hotmail.com
+@file: geo.py
+@time: 2017/3/30 15:34
+@desc:
+'''
 
 from models import Provinces, Cities, Areas
 

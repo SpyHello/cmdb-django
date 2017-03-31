@@ -18,9 +18,11 @@
                         <li>
                         <a href="#panel-group" data-toggle="tab">批量部署</a>
                         </li>
+                        {% if perms.deploy.edit_module %}
                         <li>
                         <a href="{% url 'module_list' %}">模块管理</a>
                         </li>
+                        {% endif %}
                     </ul>
 
                     <div class="x_panel" style="border-top:none;">
@@ -59,32 +61,23 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">目标主机 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                {% show_minions %}
+                                                {% show_user_group_minions request.user.pk request.user.is_superuser 'multiple' %}
                                             </div>
                                         </div>
                                         <div class="item form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">安装模块 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                {% show_modules %}
+                                                {% show_modules request.user request.user.is_superuser %}
                                             </div>
                                         </div>
                                         <div name="remark" class="item form-group">
                                         </div>
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">返回结果
-                                            </label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <fieldset disabled>
-                                                    <textarea class="form-control" name="result" rows="10">{{ ret }}</textarea>
-                                                </fieldset>
-                                            </div>
-                                        </div>
                                         <div class="ln_solid"></div>
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
-                                                <input type="submit" name="send" class="btn btn-success" value="提交">
-                                                <button name="check" class="btn btn-success">查询结果</button>
+                                                <a href="#" onclick="remote_exec(this, 'deploy', '{% url 'ajax_deploy' %}');" name="panel-single" role="button" class="btn btn-success">运行</a>
+                                                <a href="#" onclick="show_result();" role="button" class="btn btn-info">查看结果</a>
                                             </div>
                                         </div>
                                         </fieldset>
@@ -102,7 +95,7 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">目标主机 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                {% show_groups %}
+                                                {% show_user_group_groups request.user.pk request.user.is_superuser %}
                                             </div>
                                         </div>
                                         <div name="group_minions" class="item form-group">
@@ -111,25 +104,16 @@
                                             <label class="control-label col-md-3 col-sm-3 col-xs-12">安装模块 <span class="required">*</span>
                                             </label>
                                             <div class="col-md-6 col-sm-6 col-xs-12">
-                                                {% show_modules %}
+                                                {% show_modules  request.user request.user.is_superuser %}
                                             </div>
                                         </div>
                                         <div name="remark" class="item form-group">
                                         </div>
-                                        <div class="item form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-12">返回结果
-                                            </label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <fieldset disabled>
-                                                    <textarea class="form-control" name="result" rows="10">{{ ret }}</textarea>
-                                                </fieldset>
-                                            </div>
-                                        </div>
                                         <div class="ln_solid"></div>
                                         <div class="form-group">
                                             <div class="col-md-6 col-md-offset-3">
-                                                <input type="submit" name="send" class="btn btn-success" value="提交">
-                                                <button name="check" class="btn btn-success">查询结果</button>
+                                                <a href="#" onclick="remote_exec(this, 'deploy', '{% url 'ajax_deploy' %}');" name="panel-group" role="button" class="btn btn-success">运行</a>
+                                                <a href="#" onclick="show_result();" role="button" class="btn btn-info">查看结果</a>
                                             </div>
                                         </div>
                                         </fieldset>
@@ -139,6 +123,30 @@
                         </div>
                     </div>
                 </div>
+
+                    <div id="result"></div>
+                    <!-- 模态框（Modal） -->
+                    <div class="modal fade" id="result-modal-salt" tabindex="-1" role="dialog" aria-labelledby="result-modal" aria-hidden="true">
+                        <div class="modal-loading"></div>
+                        <div class="modal-dialog">
+                            <div class="modal-content" style="background-color:#272822;color:#00ff00;">
+                                <div class="modal-header" style="border-bottom:1px solid #666">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <b class="modal-title" id="result-modal" style="color:#f8f8f2">运行结果</b>&nbsp;
+                                    <a href="#" onclick="result_check('deploy', '{% url 'ajax_result' %}')" role="button" class="btn btn-dark btn-xs">重新查询</a>
+                                    <a href="#" onclick="collapse(this);" state="0" role="button" class="btn btn-dark btn-xs">展开所有</a>
+                                </div>
+                                <div id="modal-body" class="modal-body">
+                                    <div class="panel-group" id="accordion">
+                                    </div>
+                                </div>
+                                <!--<div class="modal-footer">
+
+                                </div>-->
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
                 <input type="hidden" class="form-control" value="" id="jid">
                 <input type="hidden" class="form-control" value="" id="exec_type">
 
@@ -149,10 +157,11 @@
 {% endblock %}
 
 {% block js %}
-<script src="/static/js/bootstrapValidator.min.js"></script>
+{#<script src="/static/js/bootstrapValidator.min.js"></script>#}
+<script src="/static/js/bootstrap-modal-vertical.js"></script>
 <script src="/static/js/csrf.js"></script>
+<script src="/static/js/salt_result.js"></script>
 <script>
-
     $(function(){
             $("button[name='check']").bind("click",function(){
                 var jid = $("#jid").val();
@@ -198,46 +207,6 @@ $(function(){
             }
             })
         })
-
-$(document).ready(function(){
-        $("#{{ panel }} form").bootstrapValidator({
-fields:{
-tgt_select:{
-validators:{
-notEmpty:{
-message:'请选择主机'
-}
-}
-},
-module_list:{
-validators:{
-notEmpty:{
-message:'请选择模块'
-}
-}
-}
-}
-})
-        .on('success.form.bv',function(e){
-            e.preventDefault();
-            var tgt_select = $("#{{ panel }} select[name='tgt_select']").val();
-            var module_list = $("#{{ panel }} select[name='module_list']").val();
-            $(".loading").show();
-            $.ajax({
-type:"POST",
-url:"{% url 'ajax_deploy' %}",
-data:{tgt_select:tgt_select, module_list:module_list, check_type:"{{ panel }}"},
-dataType:"html",
-success:function(ret) {
-$(".loading").hide();
-var ret = eval('('+ret+')');
-$("#{{ panel }} textarea[name='result']").html(ret.ret);
-$("#jid").val(ret.jid);
-$("#exec_type").val(ret.is_group);
-},
-});
-            })
-})
 {% endfor %}
 
 $(function(){

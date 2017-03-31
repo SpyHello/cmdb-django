@@ -43,7 +43,9 @@
                                     <th>到期时间</th>
                                     <th>联系电话</th>
                                     <th>备注</th>
+                                    {% if perms.asset.edit_asset %}
                                     <th>操作</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,8 +59,10 @@
                                     <td>{{ each_idc.idc_contacts }}</td>
                                     <td>{{ each_idc.remark }}</td>
                                     {% if perms.asset.edit_asset %}
-                                    <td><a href="{% url 'idc_manage' aid=each_idc.pk action='edit' %}" class="btn btn-success btn-sm" role="button"><i class="fa fa-edit"></i></a>
-                                    <a href="#"  data-toggle="modal" data-target="#reqDelete-{{ each_idc.pk }}" class="btn btn-danger btn-sm" role="button"><i class="fa fa-trash-o "></i></a></td>
+                                    <td>
+                                            <a href="{% url 'idc_manage' aid=each_idc.pk action='edit' %}" class="btn btn-success btn-sm" role="button"><i class="fa fa-edit"></i></a>
+                                            <a href="#"  data-toggle="modal" data-target="#reqDelete-{{ each_idc.pk }}" class="btn btn-danger btn-sm" role="button"><i class="fa fa-trash-o "></i></a>
+                                    </td>
                                     {% endif %}
                                 <!-- 模态框（Modal） -->
                                     <div class="modal fade" id="reqDelete-{{ each_idc.pk }}" tabindex="-1" role="dialog" aria-labelledby="reqDelete" aria-hidden="true">

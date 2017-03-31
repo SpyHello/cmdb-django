@@ -17,7 +17,9 @@
 
                 <div class="x_panel" style="border-top:none;">
                     <div class="x_title">
-                        <a href="{% url 'module_add' %}" style="float:left;" class="btn btn-info btn-sm" role="button" {% if not perms.deploy.edit_module %}disabled="disabled"{% endif %}><i class="fa fa-plus"></i></a>
+                        {% if perms.deploy.edit_module %}
+                        <a href="{% url 'module_add' %}" style="float:left;" class="btn btn-info btn-sm" role="button"><i class="fa fa-plus"></i></a>
+                        {% endif %}
                         <h2>模块管理<small>| 模块部署</small> </h2>
                         <ul class="nav navbar-right panel_toolbox">
                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
@@ -42,6 +44,7 @@
                                 <tr>
                                     <th>模块名称</th>
                                     <th>调用模块</th>
+                                    <th>上传者</th>
                                     <th>备注</th>
                                     <th>操作</th>
                                 </tr>
@@ -51,11 +54,34 @@
                                 <tr>
                                     <td>{{ m.name }}</td>
                                     <td>{{ m.module }}</td>
+                                    <td>{{ m.user.first_name }}</td>
                                     <td>{{ m.remark }}</td>
                                     <td>
+                                    <fieldset {% if not request.user.pk == m.user.pk and not request.user.is_superuser %}disabled{% endif %}>
                                         <a href="{% url 'module_edit' id=m.pk %}" class="btn btn-info btn-xs" {% if not perms.deploy.edit_module %}disabled="disabled"{% endif %}><i class="fa fa-pencil"></i></a>
-                                        <a href="{% url 'module_delete' %}?id={{ m.pk }}&delete=1" class="btn btn-danger btn-xs" {% if not perms.deploy.edit_module %}disabled="disabled"{% endif %}><i class="fa fa-trash-o"></i></a>
+                                        <a href="#" data-toggle="modal" data-target="#reqDelete-t{{ m.pk }}" class="btn btn-danger btn-xs"
+                                           {% if not perms.deploy.edit_module %}disabled="disabled"{% endif %}><i class="fa fa-trash-o"></i></a>
+                                    </fieldset>
                                     </td>
+                                    <!-- 模态框（Modal） -->
+                                    <div class="modal fade" id="reqDelete-t{{ m.pk }}" tabindex="-1" role="dialog" aria-labelledby="reqDelete" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                    <h4 class="modal-title" id="reqDelete">提示</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    确认是否删除？
+                                                    <div><br /><strong>{{ m.name }}</strong></div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+                                                    <a style="margin:4px;" class="btn btn-danger btn-sm" href="{% url 'module_delete' %}?id={{ m.pk }}&delete=1">删除</a>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal-dialog -->
+                                    </div><!-- /.modal -->
                                 </tr>
                                 {% endfor %}
                             </tbody>
