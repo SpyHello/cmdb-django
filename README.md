@@ -12,7 +12,6 @@ OMS自动化运维平台
 
 另外，还是要说一下，希望使用的人可以保留版权出处
 
-![soms-user](https://imaojia.com/media/pictures/2017/02/17/soms-user.png)
 
 语言：python  
 框架：django  
@@ -22,11 +21,27 @@ OMS自动化运维平台
 https://github.com/puikinsh/gentelella
 
 
-SOMS演示地址：
-http://soms.imaojia.com:8080/
+~~SOMS演示地址：
+http://soms.imaojia.com:8080/~~
 
-User: somsadmin
-Passwd: Imjtest89
+~~User: somsadmin
+Passwd: Imjtest89~~
+
+主机管理  
+![](https://imaojia.com/media/pictures/2017/02/17/salt-host.png)
+
+命令执行  
+![](https://imaojia.com/media/pictures/2017/02/17/salt-command.png)
+
+模块部署  
+![](https://imaojia.com/media/pictures/2017/02/17/salt-deploy.png)
+
+文件上传
+![](https://imaojia.com/media/pictures/2017/02/17/file-upload.png)
+
+用户管理  
+![soms-user](https://imaojia.com/media/pictures/2017/02/17/soms-user.png)
+
 
 组件要求查看requirements.txt
 
