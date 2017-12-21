@@ -139,8 +139,9 @@ python manage.py runserver 0.0.0.0:8080
 20170721新增：
 关于部署完后报401错误的，需要修改soms/settings_local.py里的相关信息
 
-有任何问题或指教可在本人博客留言  
-爱猫家 https://imaojia.com  
+有任何问题或指教可加QQ群或在本人博客留言  
+QQ群：291809453  
+爱猫家 https://imaojia.com    
 或者email：qqing_lai@hotmail.com  
 
 PS:
