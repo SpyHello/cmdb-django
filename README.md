@@ -136,7 +136,11 @@ python manage.py runserver 0.0.0.0:8080
 
 如果无法正常运行，请检查以上步骤
 
-20170721新增：
+20180201新增:  
+新增file_bakup.py文件，放至项目下media/salt/_modules目录下，然后执行如下命令同步到minion  
+salt '*' saltutil.sync_all  
+
+20170721新增：  
 关于部署完后报401错误的，需要修改soms/settings_local.py里的相关信息
 
 有任何问题或指教可加QQ群或在本人博客留言  
